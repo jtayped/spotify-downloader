@@ -18,7 +18,6 @@ export default function PlaylistDownloader() {
         `/spotify-downloader/api/playlist/${id}`
       );
       const playlist = response.data;
-      console.log(playlist);
 
       // Download playlist
       const donwloadRes = await axios.post(

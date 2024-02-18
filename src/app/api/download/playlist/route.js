@@ -5,7 +5,6 @@ const path = require("path");
 
 export const POST = async (request) => {
   const { playlist } = await request.json();
-  console.log(playlist);
 
   try {
     // Call downloadPlaylist function to generate the zip file
