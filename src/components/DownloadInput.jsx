@@ -13,7 +13,7 @@ export default function PlaylistDownloader() {
     try {
       const response = await axios.get(`/api/playlist/${playlistId}`, {
         responseType: "blob",
-        timeout: 3600,
+        timeout: 3600*1000,
       });
 
       // Create a blob URL and initiate download
