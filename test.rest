@@ -1,0 +1,2 @@
+GET http://localhost:3000/api/playlist/37i9dQZF1DXaxEKcoCdWHD
+Content-Type: application/json
