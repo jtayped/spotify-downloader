@@ -96,12 +96,8 @@ async function downloadTrack(track, archive) {
   }
 }
 
-async function downloadPlaylist(id) {
+async function downloadPlaylist(playlist) {
   try {
-    const playlist = await getRequest(
-      `https://api.spotify.com/v1/playlists/${id}`
-    );
-
     // TODO: avoid limit (100 tracks max )
     const items = playlist.tracks.items;
 
@@ -131,4 +127,15 @@ async function downloadPlaylist(id) {
   }
 }
 
-module.exports = { downloadPlaylist, downloadTrack };
+async function getPlaylist(id) {
+  try {
+    const playlist = await getRequest(
+      `https://api.spotify.com/v1/playlists/${id}`
+    );
+    return playlist;
+  } catch (error) {
+    console.error("Error downloading playlist:", error);
+  }
+}
+
+module.exports = { getPlaylist, downloadPlaylist, downloadTrack };

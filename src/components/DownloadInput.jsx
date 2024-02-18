@@ -2,22 +2,33 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { getPlaylistId } from "@/lib/spotify";
 
 export default function PlaylistDownloader() {
   const [downloading, setDownloading] = useState(false);
-  const [playlistId, setPlaylistId] = useState("");
+  const [playlistUrl, setPlaylistUrl] = useState("");
 
   const handleDownload = async () => {
     setDownloading(true);
 
     try {
-      const response = await axios.get(`/api/playlist/${playlistId}`, {
-        responseType: "blob",
-        timeout: 3600*1000,
-      });
+      // Get playlist data
+      const id = getPlaylistId(playlistUrl);
+      const response = await axios.get(
+        `/spotify-downloader/api/playlist/${id}`
+      );
+      const playlist = response.data;
+      console.log(playlist);
+
+      // Download playlist
+      const donwloadRes = await axios.post(
+        `/spotify-downloader/api/download/playlist`,
+        { playlist },
+        { responseType: "blob" }
+      );
 
       // Create a blob URL and initiate download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([donwloadRes.data]));
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", "playlist.zip");
@@ -35,8 +46,8 @@ export default function PlaylistDownloader() {
     <div>
       <input
         type="text"
-        value={playlistId}
-        onChange={(e) => setPlaylistId(e.target.value)}
+        value={playlistUrl}
+        onChange={(e) => setPlaylistUrl(e.target.value)}
         placeholder="Enter Spotify Playlist ID"
       />
       <button onClick={handleDownload}>Download Playlist</button>

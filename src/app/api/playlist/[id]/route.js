@@ -1,4 +1,4 @@
-import { downloadPlaylist } from "@/lib/downloader";
+import { downloadPlaylist, getPlaylist } from "@/lib/downloader";
 import { NextResponse } from "next/server";
 const fs = require("fs");
 const path = require("path");
@@ -13,23 +13,8 @@ export const GET = async (request, { params }) => {
     );
 
   try {
-    // Call downloadPlaylist function to generate the zip file
-    const filePath = await downloadPlaylist(id);
-
-    // Read the zip file asynchronously
-    const fileContent = await fs.promises.readFile(filePath);
-
-    // Set response headers
-    const headers = {
-      "Content-Type": "application/zip",
-      "Content-Disposition": `attachment; filename="${path.basename(
-        filePath
-      )}"`,
-      "Content-Length": fileContent.length, // Ensure proper content length
-    };
-
-    // Return the file content as a blob
-    return new Response(fileContent, { headers });
+    const playlist = await getPlaylist(id);
+    return NextResponse.json(playlist);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
