@@ -1,29 +1,35 @@
 import { downloadSingularTrack } from "@/lib/downloader";
 import { NextResponse } from "next/server";
-const fs = require("fs");
-const path = require("path");
 
 export const POST = async (request) => {
   const requestJSON = await request.json();
   const track = requestJSON.data;
 
   try {
-    const filePath = await downloadSingularTrack(track);
+    // Download the audio stream
+    const audioStream = await downloadSingularTrack(track);
 
-    // Read the track data asynchronously
-    const fileContent = await fs.promises.readFile(filePath);
+    // Convert the audio stream to a blob
+    const blob = new Blob([audioStream]);
 
-    // Set response headers
-    const headers = {
-      "Content-Type": "application/zip",
-      "Content-Disposition": `attachment; filename="${path.basename(
-        filePath
-      )}"`,
-      "Content-Length": fileContent.length, // Ensure proper content length
-    };
+    // Read the blob to ensure it's fully loaded
+    await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve();
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsArrayBuffer(blob);
+    });
 
-    // Return the file content as a blob
-    return new Response(fileContent, { headers });
+    // Return the blob in the response
+    return new Response(blob, {
+      headers: {
+        "Content-Type": "audio/mpeg", // Adjust the content type based on the audio format
+      },
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

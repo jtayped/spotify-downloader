@@ -1,11 +1,12 @@
 "use client";
-import { handleDownload } from "@/lib/spotify";
+import { handleTrackDownload } from "@/lib/spotify";
 import { FiDownload } from "react-icons/fi";
 
 const DownloadTrack = ({ track }) => {
+  const fileName = `${track.name} by ${track.artists[0].name}.mp3`;
   return (
     <button
-      onClick={() => handleDownload(track.id, "track")}
+      onClick={() => handleTrackDownload(track.id, fileName)}
       className="text-white flex items-center gap-3 bg-accent hover:bg-accent/90 transition-colors rounded p-2.5 text-lg"
     >
       <FiDownload />

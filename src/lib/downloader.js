@@ -2,12 +2,7 @@ const ytsr = require("ytsr");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
 const archiver = require("archiver");
-const {
-  getRequest,
-  getPlaylistId,
-  getElementId,
-  getElementType,
-} = require("./spotify");
+const { getRequest } = require("./spotify");
 
 async function downloadYt(ytUrl) {
   try {
@@ -106,10 +101,7 @@ async function downloadSingularTrack(track) {
     const ytUrl = await findTrackYt(track);
     const stream = await downloadYt(ytUrl);
 
-    const filePath = `${track.name} by ${track.artists[0].name}.mp3`;
-    await saveStreamToFile(stream, filePath);
-
-    return filePath;
+    return stream;
   } catch (error) {
     console.error("Error downloading track:", error);
   }
@@ -131,8 +123,6 @@ async function saveStreamToFile(stream, filePath) {
 
 async function downloadPlaylist(playlist) {
   try {
-    console.log(playlist);
-
     // TODO: avoid limit (100 tracks max )
     const items = playlist.tracks.items;
 

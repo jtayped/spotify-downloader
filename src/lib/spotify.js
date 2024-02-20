@@ -80,3 +80,22 @@ export const handleDownload = async (id, type) => {
     console.error(error);
   }
 };
+
+export const handleTrackDownload = async (id, filename) => {
+  try {
+    if (id) {
+      const response = await axios.get(`/spotify-downloader/api/track/${id}`, {
+        responseType: "blob",
+      });
+
+      // Check if the request was successful
+      if (response.status === 200) {
+        downloadBlob(response.data, filename);
+      } else {
+        console.error("Failed to download audio");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
