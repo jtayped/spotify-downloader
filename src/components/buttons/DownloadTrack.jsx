@@ -6,7 +6,7 @@ const DownloadTrack = ({ track }) => {
   const fileName = `${track.name} by ${track.artists[0].name}.mp3`;
   return (
     <button
-      onClick={() => handleTrackDownload(track.id, fileName)}
+      onClick={() => handleTrackDownload(track, fileName)}
       className="text-white flex items-center gap-3 bg-accent hover:bg-accent/90 transition-colors rounded p-2.5 text-lg"
     >
       <FiDownload />

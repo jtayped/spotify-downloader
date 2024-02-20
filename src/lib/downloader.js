@@ -3,6 +3,7 @@ const ytdl = require("ytdl-core");
 const fs = require("fs");
 const archiver = require("archiver");
 const { getRequest } = require("./spotify");
+const streamToBlob = require("stream-to-blob");
 
 async function downloadYt(ytUrl) {
   try {
@@ -16,7 +17,21 @@ async function downloadYt(ytUrl) {
 
     // Download the audio
     const audioStream = ytdl.downloadFromInfo(info, { format: audioFormat });
-    return audioStream;
+
+    // Create a promise that resolves when the stream finishes downloading
+    const downloadFinished = new Promise((resolve, reject) => {
+      audioStream.on("end", resolve());
+      audioStream.on("error", reject());
+    });
+
+    // Wait for the download to finish
+    await downloadFinished;
+
+    // Convert the stream to a Blob
+    const blob = await streamToBlob(audioStream, "audio/mpeg");
+
+    // Return the Blob
+    return blob;
   } catch (error) {
     console.error("Error downloading audio:", error);
     throw error;
@@ -87,10 +102,10 @@ async function findTrackYt(track) {
 async function downloadTrack(track, archive) {
   try {
     const ytUrl = await findTrackYt(track);
-    const stream = await downloadYt(ytUrl);
+    const blob = await downloadYt(ytUrl);
 
     const name = `${track.name} by ${track.artists[0].name}`;
-    archive.append(stream, { name: `${name}.mp3` });
+    archive.append(blob, { name: `${name}.mp3` });
   } catch (error) {
     console.error("Error downloading track:", error);
   }
@@ -99,9 +114,9 @@ async function downloadTrack(track, archive) {
 async function downloadSingularTrack(track) {
   try {
     const ytUrl = await findTrackYt(track);
-    const stream = await downloadYt(ytUrl);
+    const blob = await downloadYt(ytUrl);
 
-    return stream;
+    return blob;
   } catch (error) {
     console.error("Error downloading track:", error);
   }

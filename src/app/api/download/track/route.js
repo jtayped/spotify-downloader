@@ -3,31 +3,17 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request) => {
   const requestJSON = await request.json();
-  const track = requestJSON.data;
+  const { track } = requestJSON;
 
   try {
-    // Download the audio stream
-    const audioStream = await downloadSingularTrack(track);
+    // Download the audio track and get the Blob
+    const blob = await downloadSingularTrack(track);
+    console.log(blob);
 
-    // Convert the audio stream to a blob
-    const blob = new Blob([audioStream]);
-
-    // Read the blob to ensure it's fully loaded
-    await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve();
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-      reader.readAsArrayBuffer(blob);
-    });
-
-    // Return the blob in the response
+    // Return the Blob in the response
     return new Response(blob, {
       headers: {
-        "Content-Type": "audio/mpeg", // Adjust the content type based on the audio format
+        "Content-Type": "audio/mpeg", // Set the appropriate content type
       },
     });
   } catch (error) {
