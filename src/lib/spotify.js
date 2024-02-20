@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getToken = async () => {
-  // return "BQDnwa5gvB_bDKe59mC-AYronzaXP7YhgGEE-9UEh82-Z4K7sBmaTNKdfScZ1gnrK5RqMDvvMsDd-SLiTBnOL63fTW95e4rCDbHU-bxvI5eP5ec7Qwg";
+  // return "BQCHK5-_mpYaeBOUqN1_5CgW9ChSHKXkLuMPqounOiADbN3yZ6xL7Bhau9M8V14zn8dkg4N-mUzSn7Aiz4Pe6asTg1zD4Z3VyZXklW8juaQ_TTfdtNA";
 
   const response = await axios.post(
     "https://accounts.spotify.com/api/token",
@@ -30,15 +30,53 @@ export const getRequest = async (url) => {
   return response.data;
 };
 
-export const getPlaylistId = (url) => {
-  // Regular expression to match the playlist ID from the URL
-  const regex = /playlist\/(\w+)/;
+export function getElementId(url) {
+  const regex =
+    /(?:https?:\/\/)?(?:www\.)?open\.spotify\.com\/(?:track|playlist)\/(\w{22})/;
   const match = url.match(regex);
-
-  // If a match is found, return the playlist ID, otherwise return null
-  if (match && match[1]) {
+  if (match && match.length > 1) {
     return match[1];
   } else {
-    return null;
+    return null; // Return null if URL doesn't match expected format
+  }
+}
+
+export function getElementType(url) {
+  if (url.includes("/track/")) {
+    return "track";
+  } else if (url.includes("/playlist/")) {
+    return "playlist";
+  }
+}
+
+async function downloadBlob(blob, name) {
+  // Create a blob URL and initiate download
+  const url = window.URL.createObjectURL(new Blob([blob]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", name);
+  document.body.appendChild(link);
+  link.click();
+}
+
+export const handleDownload = async (id, type) => {
+  try {
+    if (id && type && (type === "playlist" || type === "track")) {
+      const response = await axios.get(`/spotify-downloader/api/${type}/${id}`);
+      const data = response.data;
+
+      if (!response.error) {
+        // Download playlist
+        const downloadRes = await axios.post(
+          `/spotify-downloader/api/download/${type}`,
+          { data },
+          { responseType: "blob" }
+        );
+
+        downloadBlob(downloadRes.data, `${data.name}.mp3`);
+      }
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
