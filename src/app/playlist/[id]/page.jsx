@@ -39,7 +39,7 @@ const PlaylistPage = async ({ params }) => {
         {playlist ? (
           <>
             <PlaylistInfo playlist={playlist} />
-            <TrackList tracks={playlist?.tracks} />
+            <TrackList tracks={playlist.tracks} />
           </>
         ) : null}
       </main>

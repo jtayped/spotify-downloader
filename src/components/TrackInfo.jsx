@@ -4,6 +4,8 @@ import DownloadTrack from "./buttons/DownloadTrack";
 import PlayTrack from "./PlayTrack";
 
 const TrackInfo = ({ track }) => {
+  if (!track) return;
+
   const artistLinks = track.artists.map((artist) => (
     <Link
       key={artist.id}
