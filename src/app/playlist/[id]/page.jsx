@@ -1,7 +1,7 @@
 import { getPlaylist } from "@/lib/downloader";
 import { notFound } from "next/navigation";
 import React from "react";
-// import { playlist } from "./test";
+import { playlist } from "./test";
 import PlaylistInfo from "@/components/PlaylistInfo";
 import TrackList from "@/components/TrackList";
 
@@ -17,7 +17,7 @@ const fetchPlaylist = async (id) => {
 
 const PlaylistPage = async ({ params }) => {
   const { id } = params;
-  const playlist = await fetchPlaylist(id);
+  // const playlist = await fetchPlaylist(id);
 
   return (
     <div className="w-full flex justify-center">
