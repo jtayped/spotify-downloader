@@ -20,18 +20,20 @@ const TrackInfo = ({ track }) => {
             src={track.album.images[0].url}
             width={50}
             height={50}
-            className="rounded"
+            className="rounded w-8 h-8 sm:w-10 sm:h-10"
             alt="Track Cover"
           />
-          <div className="flex flex-col max-w-[300px] overflow-hidden whitespace-nowrap">
-            <p className="font-semibold">{track.name}</p>
-            <ol className="flex items-center gap-1 text-sm">
+          <div className="flex flex-col max-w-[125px] md:max-w-[300px] overflow-hidden whitespace-nowrap">
+            <p className="font-semibold text-sm md:text-md">{track.name}</p>
+            <ol className="flex items-center gap-1 text-xs md:text-sm">
               {artistLinks.reduce((prev, curr) => [prev, "·", curr])}
             </ol>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-white/50 mr-2">{durationString}</span>
+          <span className="text-xs md:text-sm text-white/50 mr-1 md:mr-2">
+            {durationString}
+          </span>
           <PlayTrack audioUrl={track.preview_url} />
           <DownloadTrack track={track} />
         </div>

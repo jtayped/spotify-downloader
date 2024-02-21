@@ -4,8 +4,12 @@ import DownloadPlaylist from "./buttons/DownloadPlaylist";
 
 const PlaylistInfo = ({ playlist }) => {
   return (
-    <header className="bg-white/5 border border-white/10 w-full backdrop-blur-md p-5 rounded-xl flex gap-5 max-h-[305px]">
-      <Link href={playlist.external_urls.spotify} aria-label="Spotify Playlist">
+    <header className="bg-white/5 border border-white/10 w-full backdrop-blur-md p-5 rounded-xl flex flex-col sm:flex-row gap-5 md:max-h-[305px]">
+      <Link
+        href={playlist.external_urls.spotify}
+        aria-label="Spotify Playlist"
+        className="self-center md:self-start"
+      >
         <div className="flex-shrink-0 w-52 h-52 relative rounded-lg overflow-hidden">
           <Image
             src={playlist.images[0].url}
@@ -16,7 +20,7 @@ const PlaylistInfo = ({ playlist }) => {
           />
         </div>
       </Link>
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-between gap-3 md:gap-0">
         <div className="text-white">
           <h1 className="font-bold text-2xl line-clamp-1">{playlist.name}</h1>
           <p className="line-clamp-5">{playlist.description}</p>

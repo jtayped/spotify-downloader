@@ -1,9 +1,11 @@
 import { getPlaylist } from "@/lib/spotify";
 import { notFound } from "next/navigation";
 import React from "react";
-import { playlist } from "./test";
+import Link from "next/link";
 import PlaylistInfo from "@/components/PlaylistInfo";
 import TrackList from "@/components/TrackList";
+import DownloadInput from "@/components/DownloadInput";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const fetchPlaylist = async (id) => {
   try {
@@ -23,7 +25,17 @@ const PlaylistPage = async ({ params }) => {
 
   return (
     <div className="w-full flex justify-center">
-      <main className="mt-[100px] w-[700px] space-y-5">
+      <main className="md:mt-[100px] w-full md:w-[700px] py-8 px-5 space-y-5">
+        <div className="flex items-center w-full gap-2">
+          <Link
+            href="/"
+            className="text-white bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4"
+          >
+            <FaArrowLeft />
+          </Link>
+          <DownloadInput />
+        </div>
+
         {playlist ? (
           <>
             <PlaylistInfo playlist={playlist} />

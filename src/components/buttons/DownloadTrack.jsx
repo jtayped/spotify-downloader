@@ -11,14 +11,14 @@ const DownloadTrack = ({ track }) => {
       { responseType: "blob" }
     );
 
-    const filename = getFilenameFromHeaders(response.headers)
+    const filename = getFilenameFromHeaders(response.headers);
     downloadBlob(response.data, filename);
   };
 
   return (
     <button
       onClick={() => handleDownload()}
-      className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-2.5 text-lg"
+      className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-1.5 md:p-2.5 text-lg"
     >
       <FiDownload />
     </button>
