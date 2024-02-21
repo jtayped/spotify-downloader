@@ -9,8 +9,22 @@ const TrackInfo = ({ track }) => {
       {artist.name}
     </Link>
   ));
-  // const durationString = track.duration_ms/1000
-  const durationString = "3:20";
+
+  // Function to convert seconds to "mm:ss" format
+  const formatDuration = (duration) => {
+    const minutes = Math.floor(duration / 60);
+    const seconds = Math.floor(duration % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const durationString = `${Math.floor(track.duration_ms / 60000)}:${(
+    (track.duration_ms % 60000) /
+    1000
+  )
+    .toFixed(0)
+    .padStart(2, "0")}`;
 
   return (
     <div className="flex justify-between items-center text-text">
