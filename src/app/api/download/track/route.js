@@ -1,25 +1,35 @@
-import { downloadSingularTrack } from "@/lib/downloader";
+import { downloadTrack } from "@/lib/downloader";
+import filenamify from "filenamify";
 import { NextResponse } from "next/server";
 
-export const POST = async (request) => {
-  const requestJSON = await request.json();
-  const { track } = requestJSON;
+export const POST = async (request, response) => {
+  const track = await request.json();
+
+  const name = `${track.name} by ${track.artists[0].name}`;
+  const responseHeaders = new Headers(response.headers);
+
+  responseHeaders.set(
+    "Content-Disposition",
+    `attachment; filename="${filenamify(name).replace(
+      /[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu,
+      ""
+    )}.mp3"`
+  );
+  responseHeaders.set(
+    "User-Agent",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
+  );
 
   try {
-    // Download the audio track and get the Blob
-    const blob = await downloadSingularTrack(track);
-    console.log(blob);
-
-    // Return the Blob in the response
-    return new Response(blob, {
-      headers: {
-        "Content-Type": "audio/mpeg", // Set the appropriate content type
-      },
+    // Call downloadPlaylist function to generate the zip file
+    const data = await downloadTrack(track);
+    return new Response(data, {
+      headers: responseHeaders,
     });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "There has been an error downloading the track" },
+      { message: "There has been an error downloading the playlist" },
       { status: 500 }
     );
   }

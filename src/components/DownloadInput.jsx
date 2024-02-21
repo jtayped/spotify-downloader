@@ -1,6 +1,6 @@
 "use client";
 
-import { getElementId, getElementType } from "@/lib/spotify";
+import { getElementId, getElementType } from "@/lib/util";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MdOutlineSearch } from "react-icons/md";

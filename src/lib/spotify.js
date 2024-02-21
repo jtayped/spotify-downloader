@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getToken = async () => {
-  // return "BQCHK5-_mpYaeBOUqN1_5CgW9ChSHKXkLuMPqounOiADbN3yZ6xL7Bhau9M8V14zn8dkg4N-mUzSn7Aiz4Pe6asTg1zD4Z3VyZXklW8juaQ_TTfdtNA";
+  return "BQBRV3X4LIStXPIkiZg6BWsdFItkdjlJ4vbrwthSgyamX7LXxmbS3dsTrQA9WR_rTjfzvVWlrNgQxcFmMy_rvZa-iSPvFrD2DIZ3nGfHQN-8-5RUDyI";
 
   const response = await axios.post(
     "https://accounts.spotify.com/api/token",
@@ -17,7 +17,7 @@ export const getToken = async () => {
     }
   );
 
-  // console.log(response.data.access_token);
+  console.log(response.data.access_token);
   return response.data.access_token;
 };
 
@@ -30,74 +30,22 @@ export const getRequest = async (url) => {
   return response.data;
 };
 
-export function getElementId(url) {
-  const regex =
-    /(?:https?:\/\/)?(?:www\.)?open\.spotify\.com\/(?:track|playlist)\/(\w{22})/;
-  const match = url.match(regex);
-  if (match && match.length > 1) {
-    return match[1];
-  } else {
-    return null; // Return null if URL doesn't match expected format
-  }
-}
-
-export function getElementType(url) {
-  if (url.includes("/track/")) {
-    return "track";
-  } else if (url.includes("/playlist/")) {
-    return "playlist";
-  }
-}
-
-async function downloadBlob(blob, name) {
-  // Create a blob URL and initiate download
-  const url = window.URL.createObjectURL(new Blob([blob]));
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", name);
-  document.body.appendChild(link);
-  link.click();
-}
-
-export const handleDownload = async (id, type) => {
+export async function getPlaylist(id) {
   try {
-    if (id && type && (type === "playlist" || type === "track")) {
-      const response = await axios.get(`/spotify-downloader/api/${type}/${id}`);
-      const data = response.data;
-
-      if (!response.error) {
-        // Download playlist
-        const downloadRes = await axios.post(
-          `/spotify-downloader/api/download/${type}`,
-          { data },
-          { responseType: "blob" }
-        );
-
-        downloadBlob(downloadRes.data, `${data.name}.mp3`);
-      }
-    }
+    const playlist = await getRequest(
+      `https://api.spotify.com/v1/playlists/${id}`
+    );
+    return playlist;
   } catch (error) {
-    console.error(error);
+    console.error(`Error finding playlist: ${id}`);
   }
-};
+}
 
-export const handleTrackDownload = async (track, filename) => {
+export async function getTrack(id) {
   try {
-    if (track) {
-      const response = await axios.post(
-        `/spotify-downloader/api/download/track`,
-        JSON.stringify({ track })
-      );
-      const blob = response.data;
-
-      // Check if the request was successful
-      if (response.status === 200) {
-        downloadBlob(blob, filename);
-      } else {
-        console.error("Failed to download audio");
-      }
-    }
+    const track = await getRequest(`https://api.spotify.com/v1/tracks/${id}`);
+    return track;
   } catch (error) {
-    console.error(error);
+    console.error("Error downloading playlist:", error);
   }
-};
+}

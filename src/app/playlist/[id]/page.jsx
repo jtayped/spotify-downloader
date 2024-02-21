@@ -1,4 +1,4 @@
-import { getPlaylist } from "@/lib/downloader";
+import { getPlaylist } from "@/lib/spotify";
 import { notFound } from "next/navigation";
 import React from "react";
 import { playlist } from "./test";
@@ -17,13 +17,19 @@ const fetchPlaylist = async (id) => {
 
 const PlaylistPage = async ({ params }) => {
   const { id } = params;
-  // const playlist = await fetchPlaylist(id);
+
+  if (id === "null") return;
+  const playlist = await fetchPlaylist(id);
 
   return (
     <div className="w-full flex justify-center">
       <main className="mt-[100px] w-[700px] space-y-5">
-        <PlaylistInfo playlist={playlist} />
-        <TrackList tracks={playlist.tracks} />
+        {playlist ? (
+          <>
+            <PlaylistInfo playlist={playlist} />
+            <TrackList tracks={playlist?.tracks} />
+          </>
+        ) : null}
       </main>
     </div>
   );

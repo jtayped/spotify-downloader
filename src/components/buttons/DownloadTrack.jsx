@@ -1,12 +1,23 @@
 "use client";
-import { handleTrackDownload } from "@/lib/spotify";
+import { downloadBlob, getFilenameFromHeaders } from "@/lib/util";
+import axios from "axios";
 import { FiDownload } from "react-icons/fi";
 
 const DownloadTrack = ({ track }) => {
-  const fileName = `${track.name} by ${track.artists[0].name}.mp3`;
+  const handleDownload = async () => {
+    const response = await axios.post(
+      "/spotify-downloader/api/download/track",
+      track,
+      { responseType: "blob" }
+    );
+
+    const filename = getFilenameFromHeaders(response.headers)
+    downloadBlob(response.data, filename);
+  };
+
   return (
     <button
-      onClick={() => handleTrackDownload(track, fileName)}
+      onClick={() => handleDownload()}
       className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-2.5 text-lg"
     >
       <FiDownload />

@@ -9,8 +9,9 @@ const PlaylistInfo = ({ playlist }) => {
         <div className="flex-shrink-0 w-52 h-52 relative rounded-lg overflow-hidden">
           <Image
             src={playlist.images[0].url}
-            layout="fill"
-            objectFit="cover"
+            width={208}
+            height={208}
+            priority={1}
             alt="Playlist Cover"
           />
         </div>
