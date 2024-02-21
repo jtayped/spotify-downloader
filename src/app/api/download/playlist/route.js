@@ -8,9 +8,10 @@ export const POST = async (request, response) => {
   const responseHeaders = new Headers(response.headers);
   responseHeaders.set(
     "Content-Disposition",
-    `attachment; filename="${filenamify(
-      playlist.name
-    ).replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, "")}.zip"`
+    `attachment; filename="${filenamify(playlist.name).replace(
+      /[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu,
+      ""
+    )}.zip"`
   );
   responseHeaders.set(
     "User-Agent",
