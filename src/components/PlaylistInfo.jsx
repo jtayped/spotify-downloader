@@ -17,6 +17,7 @@ const PlaylistInfo = ({ playlist }) => {
             height={208}
             priority={1}
             alt="Playlist Cover"
+            className="w-full h-full"
           />
         </div>
       </Link>
