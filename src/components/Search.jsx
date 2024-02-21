@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
-export default function PlaylistDownloader() {
+export default function Search() {
   const router = useRouter();
 
   const [error, setError] = useState(false);

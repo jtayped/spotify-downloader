@@ -2,7 +2,7 @@ import { getTrack } from "@/lib/spotify";
 import { notFound } from "next/navigation";
 import React from "react";
 import Link from "next/link";
-import DownloadInput from "@/components/DownloadInput";
+import Search from "@/components/Search";
 import { FaArrowLeft } from "react-icons/fa6";
 import TrackInfo from "@/components/TrackInfo";
 
@@ -33,7 +33,7 @@ const TrackPage = async ({ params }) => {
           >
             <FaArrowLeft />
           </Link>
-          <DownloadInput />
+          <Search />
         </div>
 
         {track ? (

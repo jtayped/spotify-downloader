@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import DownloadTrack from "./buttons/DownloadTrack";
-import PlayTrack from "./PlayTrack";
+import PlayTrack from "./buttons/PlayTrack";
 
 const TrackInfo = ({ track }) => {
   if (!track) return;

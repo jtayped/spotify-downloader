@@ -1,4 +1,4 @@
-import DownloadInput from "@/components/DownloadInput";
+import Search from "@/components/Search";
 import Link from "next/link";
 
 const Home = async () => {
@@ -19,7 +19,7 @@ const Home = async () => {
             .
           </p>
         </div>
-        <DownloadInput />
+        <Search />
       </div>
     </main>
   );
