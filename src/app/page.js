@@ -5,7 +5,7 @@ const Home = async () => {
   return (
     <main className="w-full h-full flex items-center justify-center">
       <div className="px-5 w-full md:w-[700px] space-y-5">
-        <div className="text-text w-4/5">
+        <div className="text-text md:w-4/5">
           <p className="text-xs tracking-widest">
             by <Link href="https://joeltaylor.business">Joel Taylor</Link>
           </p>

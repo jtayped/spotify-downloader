@@ -1,4 +1,4 @@
-import { getTrack } from "@/lib/downloader";
+import { getTrack } from "@/lib/spotify";
 import { NextResponse } from "next/server";
 
 export const GET = async (request, { params }) => {
@@ -16,7 +16,7 @@ export const GET = async (request, { params }) => {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "There has been an error downloading the track" },
+      { message: "There has been an error fetching the track" },
       { status: 500 }
     );
   }

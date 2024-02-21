@@ -1,7 +1,5 @@
-import { downloadPlaylist, getPlaylist } from "@/lib/downloader";
+import { getPlaylist } from "@/lib/spotify";
 import { NextResponse } from "next/server";
-const fs = require("fs");
-const path = require("path");
 
 export const GET = async (request, { params }) => {
   const id = params.id;
@@ -18,7 +16,7 @@ export const GET = async (request, { params }) => {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "There has been an error downloading the playlist" },
+      { message: "There has been an error fetching the playlist" },
       { status: 500 }
     );
   }

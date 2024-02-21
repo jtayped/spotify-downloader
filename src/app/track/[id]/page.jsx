@@ -2,8 +2,6 @@ import { getTrack } from "@/lib/spotify";
 import { notFound } from "next/navigation";
 import React from "react";
 import Link from "next/link";
-import PlaylistInfo from "@/components/PlaylistInfo";
-import TrackList from "@/components/TrackList";
 import DownloadInput from "@/components/DownloadInput";
 import { FaArrowLeft } from "react-icons/fa6";
 import TrackInfo from "@/components/TrackInfo";
@@ -22,6 +20,7 @@ const TrackPage = async ({ params }) => {
   const { id } = params;
 
   if (id === "null") return;
+
   const track = await fetchTrack(id);
 
   return (
