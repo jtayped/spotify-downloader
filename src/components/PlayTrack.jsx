@@ -1,42 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
 
 const PlayTrack = ({ audioUrl }) => {
   const [audio, setAudio] = useState(null);
+  const [playing, setPlaying] = useState(false);
 
-  const handlePlay = async () => {
-    audio.play();
-  };
+  useEffect(() => {
+    const fetchAudio = () => {
+      const audio = new Audio(audioUrl);
+      audio.onended = function () {
+        setPlaying(false);
+      };
+      setAudio(audio);
+    };
+    fetchAudio();
+  }, [audioUrl]);
 
-  const handlePause = () => {
-    audio.pause();
-  };
+  const handleClick = () => {
+    if (!audio) return;
 
-  const handlePlayPause = () => {
-    // If no preview is found it will not play
-    if (!audioUrl) return;
-
-    // Fetch audio if hasn't been loaded before
-    if (!audio) {
-      const audioElement = new Audio(audioUrl);
-      setAudio(audioElement);
-      console.log(audio);
+    if (audio.paused) {
+      audio.play();
+      setPlaying(true);
+    } else {
+      audio.pause();
+      setPlaying(false);
     }
-
-    if (audio.paused) handlePlay();
-    else handlePause();
-
-    console.log(audio.paused);
   };
 
   return (
     <button
-      onClick={handlePlayPause}
+      onClick={handleClick}
       disabled={!audioUrl}
-      className="p-2.5 rounded bg-white/10 border border-white/5 hover:bg-white/15 disabled:brightness-75 transition-colors"
+      className="p-2.5 rounded bg-white/10 border border-white/5 hover:bg-white/15 disabled:hover:bg-white/10 disabled:brightness-75 transition-colors"
     >
-      {audio ? audio.paused ? <FaPlay /> : <FaPause /> : <FaPlay />}
+      {playing ? <FaPause /> : <FaPlay />}
     </button>
   );
 };
