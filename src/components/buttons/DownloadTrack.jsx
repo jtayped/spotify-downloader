@@ -7,7 +7,7 @@ const DownloadTrack = ({ track }) => {
   return (
     <button
       onClick={() => handleTrackDownload(track, fileName)}
-      className="text-white flex items-center gap-3 bg-accent hover:bg-accent/90 transition-colors rounded p-2.5 text-lg"
+      className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-2.5 text-lg"
     >
       <FiDownload />
     </button>

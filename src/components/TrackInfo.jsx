@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import DownloadTrack from "./buttons/DownloadTrack";
+import PlayTrack from "./PlayTrack";
 
 const TrackInfo = ({ track }) => {
   const artistLinks = track.artists.map((artist) => (
@@ -8,6 +9,8 @@ const TrackInfo = ({ track }) => {
       {artist.name}
     </Link>
   ));
+  // const durationString = track.duration_ms/1000
+  const durationString = "3:20";
 
   return (
     <div className="flex justify-between items-center text-text">
@@ -27,7 +30,9 @@ const TrackInfo = ({ track }) => {
             </ol>
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-white/50 mr-2">{durationString}</span>
+          <PlayTrack audioUrl={track.preview_url} />
           <DownloadTrack track={track} />
         </div>
       </div>
