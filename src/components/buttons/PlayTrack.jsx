@@ -34,6 +34,7 @@ const PlayTrack = ({ audioUrl }) => {
       <button
         onClick={handleClick}
         disabled={!audioUrl}
+        aria-label={playing ? "Pause" : "Play"}
         className="relative p-1.5 md:p-2.5 rounded bg-white/10 border border-white/5 hover:bg-white/15 disabled:hover:bg-white/10 disabled:brightness-50 transition-colors"
       >
         {playing ? <FaPause /> : <FaPlay />}

@@ -25,6 +25,7 @@ const DownloadTrack = ({ track }) => {
   return (
     <button
       onClick={() => handleDownload()}
+      aria-label="Download Track"
       className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-1.5 md:p-2.5 text-lg"
     >
       {downloading ? (

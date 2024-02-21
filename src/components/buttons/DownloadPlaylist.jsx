@@ -39,6 +39,7 @@ const DownloadPlaylist = ({ playlist }) => {
   return (
     <button
       onClick={() => handleDownload(playlist.id, playlist.type)}
+      aria-label="Download Playlist"
       className="text-white flex items-center gap-3 bg-accent hover:bg-accent/90 transition-colors rounded px-5 py-2"
     >
       {downloading ? (

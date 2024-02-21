@@ -60,6 +60,7 @@ export default function Search() {
       <button
         className="transition-colors p-2 rounded text-white/50"
         type="submit"
+        aria-label="Search"
       >
         <FaSearch />
       </button>
