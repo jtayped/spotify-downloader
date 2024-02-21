@@ -11,9 +11,9 @@ module.exports = {
         accent: "#1DB954",
         primary: "#191414",
         secondary: "#212121",
-        text: "#FFF"
+        text: "#FFF",
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };

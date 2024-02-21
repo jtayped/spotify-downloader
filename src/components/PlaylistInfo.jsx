@@ -24,7 +24,10 @@ const PlaylistInfo = ({ playlist }) => {
       <div className="flex flex-col justify-between gap-3 md:gap-0">
         <div className="text-white">
           <h1 className="font-bold text-2xl line-clamp-1">{playlist.name}</h1>
-          <p className="line-clamp-5">{playlist.description}</p>
+          <p
+            className="line-clamp-5 prose text-white prose-a:text-gray-200"
+            dangerouslySetInnerHTML={{ __html: playlist.description }}
+          ></p>
         </div>
         <div className="flex items-center gap-2.5 text-sm text-white/80">
           <DownloadPlaylist playlist={playlist} />
