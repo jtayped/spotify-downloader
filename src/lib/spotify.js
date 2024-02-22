@@ -1,8 +1,6 @@
 import axios from "axios";
 
 export const getToken = async () => {
-  return "BQCRgpr7DokuufRAXVg23TWas0DqzMBaCk2lR8NJlz9s4P5utZcSSuRCDT-cUk8qMxkhrAQixo3v3xMyFQXgYaaSosx0Rs1QIFcUs5pmDlAIeWYKcH0";
-
   const response = await axios.post(
     "https://accounts.spotify.com/api/token",
     "grant_type=client_credentials",
@@ -17,7 +15,6 @@ export const getToken = async () => {
     }
   );
 
-  console.log(response.data.access_token);
   return response.data.access_token;
 };
 
