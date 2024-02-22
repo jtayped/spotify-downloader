@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getToken = async () => {
-  return "BQD-Zc9Z1UU7cDbF6Du1gBAfz_rfFISImiXlPgGmfuWBbSw8phEBN2st2rFHZLemm4av_IUDo21J4qSQ-Dj6gEGyJrbxxPOFHtQ1VH3m6frNQNVUQ7k";
+  return "BQAQxzsyCf300MKxi0IrJlEv53oDuvJ2eK1dcMdWC7v4DaAZj8mz5HlpmZSRZ9XNV0z6CPlmKH2B8s9UCAC1dxPvi_cxuJM98c42RMOlLaZkO_rokc0";
 
   const response = await axios.post(
     "https://accounts.spotify.com/api/token",
