@@ -5,7 +5,7 @@ const streamToBlob = require("stream-to-blob");
 const JSZip = require("jszip");
 import filenamify from "filenamify";
 
-export async function downloadYt(ytUrl) {
+async function downloadYt(ytUrl) {
   try {
     // Get video info
     const info = await ytdl.getInfo(ytUrl);
@@ -31,12 +31,11 @@ export async function downloadYt(ytUrl) {
     const blob = await streamToBlob(audioStream, "audio/mpeg");
     return blob;
   } catch (error) {
-    console.error("Error downloading audio:", error);
-    throw error;
+    console.error(`Error downloading ${ytUrl}`);
   }
 }
 
-export function parseDuration(durationString) {
+function parseDuration(durationString) {
   // Split the string by ":" to separate hours, minutes, and seconds
   const durationArray = durationString.split(":").map(Number);
 
@@ -84,8 +83,8 @@ export async function findTrackYt(track) {
       let { duration, url } = result;
 
       // Check if required fields are present
-      if (!duration || !url) continue
-      
+      if (!duration || !url) continue;
+
       // Calculate the closest duration
       const durationInSeconds = parseDuration(duration);
       if (
@@ -119,8 +118,14 @@ export async function downloadTrack(track) {
 
 export async function downloadPlaylist(playlist) {
   try {
-    // TODO: avoid limit (100 tracks max )
-    const items = playlist.tracks.items;
+    // Avoid the 100 track limit
+    let { items, next } = playlist.tracks;
+    while (next) {
+      const nextTracks = await getRequest(next);
+      items.push(...nextTracks.items);
+
+      next = nextTracks.next;
+    }
 
     // Download each track
     const downloadPromises = items.map(async (item) => {
