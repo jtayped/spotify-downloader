@@ -5,6 +5,8 @@ import Search from "@/components/Search";
 import TrackInfo from "@/components/TrackInfo";
 import HomeButton from "@/components/buttons/HomeButton";
 
+export const runtime = "edge";
+
 const fetchTrack = async (id) => {
   try {
     const track = await getTrack(id);

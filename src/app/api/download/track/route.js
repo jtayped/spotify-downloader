@@ -2,6 +2,8 @@ import { downloadTrack } from "@/lib/downloader";
 import filenamify from "filenamify";
 import { NextResponse } from "next/server";
 
+export const runtime = 'edge';
+
 export const POST = async (request, response) => {
   const track = await request.json();
 

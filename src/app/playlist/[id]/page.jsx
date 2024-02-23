@@ -6,6 +6,8 @@ import TrackList from "@/components/TrackList";
 import Search from "@/components/Search";
 import HomeButton from "@/components/buttons/HomeButton";
 
+export const runtime = "edge";
+
 const fetchPlaylist = async (id) => {
   try {
     const playlist = await getPlaylist(id);
