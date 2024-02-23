@@ -1,8 +1,6 @@
 import { getTrack } from "@/lib/spotify";
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 export const GET = async (request, { params }) => {
   const id = params.id;
 
