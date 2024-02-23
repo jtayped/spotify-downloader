@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: "/spotify-downloader",
+  //basePath: "/spotify-downloader",
   images: {
     remotePatterns: [
       {
