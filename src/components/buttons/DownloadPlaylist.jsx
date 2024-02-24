@@ -25,7 +25,7 @@ const DownloadPlaylist = ({ playlist }) => {
     setDownloading(true);
 
     const response = await axios.post(
-      "/spotify-downloader/api/download/playlist",
+      "/api/download/playlist",
       playlist,
       { responseType: "blob" }
     );
