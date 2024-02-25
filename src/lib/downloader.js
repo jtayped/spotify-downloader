@@ -104,7 +104,11 @@ export async function findTrackYt(track) {
   }
 }
 
-export async function downloadTrack(track) {
+export async function downloadTrack(track, silent = true) {
+  if (!silent) {
+    console.log(`[${serverTimestamp()}]: Downloading ${track?.name}...`);
+  }
+
   try {
     const ytUrl = await findTrackYt(track);
     if (!ytUrl) return;

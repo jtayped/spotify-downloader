@@ -22,7 +22,7 @@ export const POST = async (request, response) => {
 
   try {
     // Call downloadPlaylist function to generate the zip file
-    const data = await downloadTrack(track);
+    const data = await downloadTrack(track, false);
     return new Response(data, {
       headers: responseHeaders,
     });
