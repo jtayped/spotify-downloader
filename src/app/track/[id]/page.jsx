@@ -5,22 +5,17 @@ import Search from "@/components/Search";
 import TrackInfo from "@/components/TrackInfo";
 import HomeButton from "@/components/buttons/HomeButton";
 
-const fetchTrack = async (id) => {
-  try {
-    const track = await getTrack(id);
-    return track;
-  } catch (error) {
-    console.error(error);
-    notFound();
-  }
-};
-
 const TrackPage = async ({ params }) => {
   const { id } = params;
 
+  // Check if id is missing
   if (id === "null") return;
 
-  const track = await fetchTrack(id);
+  // Fetch track
+  const track = await getTrack(id);
+
+  // Check if track was not found
+  if (!track) notFound();
 
   return (
     <div className="w-full flex justify-center">

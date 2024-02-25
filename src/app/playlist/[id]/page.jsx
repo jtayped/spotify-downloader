@@ -6,21 +6,17 @@ import TrackList from "@/components/TrackList";
 import Search from "@/components/Search";
 import HomeButton from "@/components/buttons/HomeButton";
 
-const fetchPlaylist = async (id) => {
-  try {
-    const playlist = await getPlaylist(id);
-    return playlist;
-  } catch (error) {
-    console.error(error);
-    notFound();
-  }
-};
-
 const PlaylistPage = async ({ params }) => {
   const { id } = params;
 
+  // Check if no id
   if (id === "null") return;
-  const playlist = await fetchPlaylist(id);
+
+  // Fetch playlist
+  const playlist = await getPlaylist(id);
+
+  // Check if playlist was not found
+  if (!playlist) notFound();
 
   return (
     <div className="w-full flex justify-center">
