@@ -129,30 +129,47 @@ export async function downloadPlaylist(playlist) {
   );
 
   try {
-    // Avoid the 100 track limit
     const { items } = playlist.tracks;
 
-    // Download each track
-    const downloadPromises = items.map(async (item) => {
-      const track = item.track;
-      const blob = await downloadTrack(track);
-      if (!blob) return; // Check if track downloaded
+    // Split the items array into chunks of 50 tracks each
+    const chunkSize = 25;
+    const chunks = [];
+    for (let i = 0; i < items.length; i += chunkSize) {
+      chunks.push(items.slice(i, i + chunkSize));
+    }
 
-      const name = `${track.name} by ${track.artists[0].name}`;
-      return { name, blob }; // Return object with track name and blob
+    // Process each chunk in parallel
+    const downloadPromises = chunks.map(async (chunk) => {
+      // Download each track in the chunk
+      const trackData = await Promise.all(
+        chunk.map(async (item) => {
+          const track = item.track;
+          const blob = await downloadTrack(track);
+          if (!blob) return; // Check if track downloaded
+
+          const name = `${track.name} by ${track.artists[0].name}`;
+          return { name, blob }; // Return object with track name and blob
+        })
+      );
+      return trackData.filter(Boolean); // Remove undefined values
     });
-    const trackData = await Promise.all(downloadPromises);
+
+    // Wait for all chunks to be processed
+    const allTrackData = await Promise.all(downloadPromises);
 
     // Create a zip file and add blobs
     const zip = new JSZip();
-    trackData.forEach((data) => {
-      if (!data) return; // Check if track downloaded
-
-      const { name, blob } = data;
-      zip.file(
-        `${filenamify(name).replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, "")}.mp3`,
-        blob.arrayBuffer()
-      );
+    allTrackData.forEach((chunkTrackData) => {
+      chunkTrackData.forEach((data) => {
+        const { name, blob } = data;
+        zip.file(
+          `${filenamify(name).replace(
+            /[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu,
+            ""
+          )}.mp3`,
+          blob.arrayBuffer()
+        );
+      });
     });
 
     // Generate the zip blob
