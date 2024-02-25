@@ -4,6 +4,7 @@ const { getRequest } = require("./spotify");
 const streamToBlob = require("stream-to-blob");
 const JSZip = require("jszip");
 import filenamify from "filenamify";
+import { serverTimestamp } from "./util";
 
 async function downloadYt(ytUrl) {
   try {
@@ -117,6 +118,12 @@ export async function downloadTrack(track) {
 }
 
 export async function downloadPlaylist(playlist) {
+  console.log(
+    `[${serverTimestamp()}]: Downloading ${
+      playlist?.tracks.total
+    } tracks from ${playlist?.name}...`
+  );
+
   try {
     // Avoid the 100 track limit
     const { items } = playlist.tracks;
