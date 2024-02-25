@@ -119,13 +119,7 @@ export async function downloadTrack(track) {
 export async function downloadPlaylist(playlist) {
   try {
     // Avoid the 100 track limit
-    let { items, next } = playlist.tracks;
-    while (next) {
-      const nextTracks = await getRequest(next);
-      items.push(...nextTracks.items);
-
-      next = nextTracks.next;
-    }
+    const { items } = playlist.tracks;
 
     // Download each track
     const downloadPromises = items.map(async (item) => {

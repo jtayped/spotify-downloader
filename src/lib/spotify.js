@@ -29,9 +29,18 @@ export const getRequest = async (url) => {
 
 export async function getPlaylist(id) {
   try {
-    const playlist = await getRequest(
+    let playlist = await getRequest(
       `https://api.spotify.com/v1/playlists/${id}`
     );
+
+    let { next } = playlist.tracks;
+    while (next) {
+      const nextTracks = await getRequest(next);
+      playlist.tracks.items.push(...nextTracks.items);
+
+      next = nextTracks.next;
+    }
+
     return playlist;
   } catch (error) {
     console.error(`Error fetching playlist: ${id}`);
