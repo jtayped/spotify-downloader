@@ -15,7 +15,7 @@ const TrackInfo = ({ track }) => {
       {artist.name}
     </Link>
   ));
-  
+
   const durationString = `${Math.floor(track.duration_ms / 60000)}:${(
     (track.duration_ms % 60000) /
     1000
@@ -40,7 +40,7 @@ const TrackInfo = ({ track }) => {
           <div className="flex flex-col max-w-[125px] md:max-w-[300px] overflow-hidden whitespace-nowrap">
             <Link
               href={track.external_urls.spotify}
-              className="font-semibold text-sm md:text-md"
+              className="font-semibold text-sm md:text-md truncate"
             >
               {track.name}
             </Link>
