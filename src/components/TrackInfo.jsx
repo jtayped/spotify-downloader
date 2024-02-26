@@ -15,16 +15,7 @@ const TrackInfo = ({ track }) => {
       {artist.name}
     </Link>
   ));
-
-  // Function to convert seconds to "mm:ss" format
-  const formatDuration = (duration) => {
-    const minutes = Math.floor(duration / 60);
-    const seconds = Math.floor(duration % 60);
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
+  
   const durationString = `${Math.floor(track.duration_ms / 60000)}:${(
     (track.duration_ms % 60000) /
     1000
