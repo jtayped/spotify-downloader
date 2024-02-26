@@ -1,9 +1,32 @@
 import { downloadPlaylist } from "@/lib/downloader";
 import filenamify from "filenamify";
 import { NextResponse } from "next/server";
-import io from "@/lib/socket";
+// import io from "@/lib/socket";
+import { SOCKET_PORT } from "@/config/app";
+import { Server } from "socket.io";
+
+let io; // Singleton WebSocket server instance
+
+// Function to initialize WebSocket server
+const initializeWebSocketServer = () => {
+  io = new Server({
+    path: "/api/socket",
+    addTrailingSlash: false,
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+    },
+  });
+  io.connectTimeout = Infinity;
+  io.listen(SOCKET_PORT);
+  return io;
+};
 
 export const POST = async (request, response) => {
+  // Init socket.io if not initialised
+  if (!io) {
+    io = initializeWebSocketServer();
+  }
   const playlist = await request.json();
 
   const responseHeaders = new Headers(response.headers);
