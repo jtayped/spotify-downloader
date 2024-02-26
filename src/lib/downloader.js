@@ -121,7 +121,7 @@ export async function downloadTrack(track, silent = true) {
   }
 }
 
-export async function downloadPlaylist(playlist) {
+export async function downloadPlaylist(playlist, progressCallback) {
   console.log(
     `[${serverTimestamp()}]: Downloading ${
       playlist?.tracks.total
@@ -138,6 +138,7 @@ export async function downloadPlaylist(playlist) {
       chunks.push(items.slice(i, i + chunkSize));
     }
 
+    let tracksDownloaded = 0;
     // Process each chunk in parallel
     const downloadPromises = chunks.map(async (chunk) => {
       // Download each track in the chunk
@@ -145,6 +146,11 @@ export async function downloadPlaylist(playlist) {
         chunk.map(async (item) => {
           const track = item.track;
           const blob = await downloadTrack(track);
+
+          tracksDownloaded = tracksDownloaded + 1;
+          const progress = (tracksDownloaded / playlist.tracks.total) * 100;
+          progressCallback(Math.round(progress));
+
           if (!blob) return; // Check if track downloaded
 
           const name = `${track.name} by ${track.artists[0].name}`;

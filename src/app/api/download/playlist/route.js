@@ -1,8 +1,17 @@
+import { SOCKET_PORT } from "@/config/app";
 import { downloadPlaylist } from "@/lib/downloader";
 import filenamify from "filenamify";
 import { NextResponse } from "next/server";
+import { Server } from "socket.io";
 
 export const POST = async (request, response) => {
+  const io = new Server({
+    path: "/api/socket",
+    addTrailingSlash: false,
+    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+  });
+  io.listen(SOCKET_PORT);
+
   const playlist = await request.json();
 
   const responseHeaders = new Headers(response.headers);
@@ -20,7 +29,10 @@ export const POST = async (request, response) => {
 
   try {
     // Call downloadPlaylist function to generate the zip file
-    const data = await downloadPlaylist(playlist);
+    const data = await downloadPlaylist(playlist, (progress) =>
+      io.emit("progress", progress)
+    );
+
     return new Response(data, {
       headers: responseHeaders,
     });
