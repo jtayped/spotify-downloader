@@ -11,7 +11,6 @@ let io; // Singleton WebSocket server instance
 const initializeWebSocketServer = () => {
   io = new Server({
     path: "/api/socket",
-    addTrailingSlash: false,
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
