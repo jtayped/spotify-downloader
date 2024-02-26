@@ -1,1 +1,1 @@
-export const SOCKET_PORT = 8080;
+export const SOCKET_PORT = 80;
