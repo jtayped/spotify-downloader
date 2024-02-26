@@ -17,7 +17,7 @@ export const PlayerProvider = ({ children }) => {
         audio.pause();
       }
     }
-  }, [audio, playing, trackId]); // Track changes in audio, playing, and trackId
+  }, [audio, playing, trackId]);
 
   const loadAudio = (audioUrl) => {
     // Pause current audio if any
@@ -45,8 +45,12 @@ export const PlayerProvider = ({ children }) => {
     }
   };
 
+  const isTrackPlaying = (otherTrackId) => {
+    return trackId === otherTrackId && playing;
+  };
+
   // Value object to be passed as context value
-  const value = { togglePlay, trackId, playing };
+  const value = { togglePlay, trackId, playing, isTrackPlaying };
 
   return (
     <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
