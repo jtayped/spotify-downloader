@@ -13,7 +13,7 @@ const initializeWebSocketServer = () => {
     path: "/api/socket",
     addTrailingSlash: false,
     cors: {
-      origin: "http://localhost:3000",
+      origin: "https://spotify.joeltaylor.business",
       methods: ["GET", "POST"],
     },
   });
