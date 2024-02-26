@@ -18,6 +18,14 @@ const DownloadPlaylist = ({ playlist }) => {
       path: "/api/socket",
       addTrailingSlash: false,
     });
+    socket.on("connection", (res) => {
+      console.log("Client connected");
+
+      // Handle disconnection
+      res.on("disconnect", () => {
+        console.log("Client disconnected");
+      });
+    });
     socket.on("connect_error", (err) => {
       console.error(`connect_error due to ${err.message}`);
     });
@@ -27,10 +35,13 @@ const DownloadPlaylist = ({ playlist }) => {
       responseType: "blob",
     });
 
+    socket.disconnect();
+
     const filename = getFilenameFromHeaders(response.headers);
     downloadBlob(response.data, filename);
 
     setDownloading(false);
+    setProgress(0);
   };
 
   return (

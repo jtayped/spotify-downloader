@@ -33,11 +33,13 @@ export const POST = async (request, response) => {
       io.emit("progress", progress)
     );
 
+    io.close(() => console.log("Server disconnected!"));
     return new Response(data, {
       headers: responseHeaders,
     });
   } catch (error) {
     console.error(error);
+    io.close();
     return NextResponse.json(
       { message: "There has been an error downloading the playlist" },
       { status: 500 }
