@@ -147,11 +147,11 @@ export async function downloadPlaylist(playlist, progressCallback) {
           const track = item.track;
           const blob = await downloadTrack(track);
 
+          if (!blob) return; // Check if track downloaded
+          
           tracksDownloaded = tracksDownloaded + 1;
           const progress = (tracksDownloaded / playlist.tracks.total) * 100;
           progressCallback(Math.round(progress));
-
-          if (!blob) return; // Check if track downloaded
 
           const name = `${track.name} by ${track.artists[0].name}`;
           return { name, blob }; // Return object with track name and blob
