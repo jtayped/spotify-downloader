@@ -4,7 +4,10 @@ import { Server } from "socket.io";
 const io = new Server({
   path: "/api/socket",
   addTrailingSlash: false,
-  cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+  cors: {
+    origin: "https://spotify.joeltaylor.business/",
+    methods: ["GET", "POST"],
+  },
 });
 io.connectTimeout = Infinity;
 io.listen(SOCKET_PORT);
