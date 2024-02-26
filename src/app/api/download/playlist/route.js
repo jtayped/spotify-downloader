@@ -38,7 +38,6 @@ export const POST = async (request, response) => {
     });
   } catch (error) {
     console.error(error);
-    io.close();
     return NextResponse.json(
       { message: "There has been an error downloading the playlist" },
       { status: 500 }
