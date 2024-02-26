@@ -1,15 +1,7 @@
-import { SOCKET_PORT } from "@/config/app";
 import { downloadPlaylist } from "@/lib/downloader";
 import filenamify from "filenamify";
 import { NextResponse } from "next/server";
-import { Server } from "socket.io";
-
-const io = new Server({
-  path: "/api/socket",
-  addTrailingSlash: false,
-  cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
-});
-io.listen(SOCKET_PORT);
+import io from "@/lib/socket";
 
 export const POST = async (request, response) => {
   const playlist = await request.json();
