@@ -13,12 +13,13 @@ const initializeWebSocketServer = () => {
     path: "/api/socket",
     addTrailingSlash: false,
     cors: {
-      origin: "https://spotify.joeltaylor.business/",
+      origin: "*",
       methods: ["GET", "POST"],
     },
   });
   io.connectTimeout = Infinity;
   io.listen(SOCKET_PORT);
+
   return io;
 };
 
