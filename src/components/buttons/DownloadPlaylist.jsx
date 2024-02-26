@@ -3,7 +3,7 @@
 import { SOCKET_PORT } from "@/config/app";
 import { downloadBlob, getFilenameFromHeaders } from "@/lib/util";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FiDownload } from "react-icons/fi";
 import { io } from "socket.io-client";
 
