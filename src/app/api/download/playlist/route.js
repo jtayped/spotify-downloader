@@ -17,6 +17,7 @@ const initializeWebSocketServer = () => {
       methods: ["GET", "POST"],
     },
   });
+  console.log("aaa")
   io.on("connection", () => {
     console.log("Client connected")
   })
