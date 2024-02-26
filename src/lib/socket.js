@@ -6,6 +6,7 @@ const io = new Server({
   addTrailingSlash: false,
   cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
+io.connectTimeout = Infinity;
 io.listen(SOCKET_PORT);
 
 export default io;

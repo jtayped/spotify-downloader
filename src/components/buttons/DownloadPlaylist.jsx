@@ -18,17 +18,20 @@ const DownloadPlaylist = ({ playlist }) => {
       path: "/api/socket",
       addTrailingSlash: false,
     });
-    socket.on("connection", (res) => {
+    socket.on("connection", () => {
       console.log("Client connected");
+    });
+    socket.on("disconnect", () => {
+      console.log("Client disconnected");
+    });
+    socket.on("connect_error", () => {
+      setTimeout(() => {
+        console.log("Reconnecting...");
+        socket.connect();
+      }, 1000);
+    });
 
-      // Handle disconnection
-      res.on("disconnect", () => {
-        console.log("Client disconnected");
-      });
-    });
-    socket.on("connect_error", (err) => {
-      console.error(`connect_error due to ${err.message}`);
-    });
+    // Handle progress updates
     socket.on("progress", (progress) => setProgress(progress));
 
     const response = await axios.post("/api/download/playlist", playlist, {
