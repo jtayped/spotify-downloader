@@ -18,15 +18,9 @@ const DownloadPlaylist = ({ playlist }) => {
       path: "/api/socket",
       addTrailingSlash: false,
     });
-    socket.on("connection", () => {
-      console.log("Client connected");
-    });
-    socket.on("disconnect", () => {
-      console.log("Client disconnected");
-    });
     socket.on("connect_error", () => {
       setTimeout(() => {
-        console.log("Reconnecting...");
+        console.log("Reconnecting socket...");
         socket.connect();
       }, 1000);
     });
