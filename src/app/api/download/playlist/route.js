@@ -17,6 +17,9 @@ const initializeWebSocketServer = () => {
       methods: ["GET", "POST"],
     },
   });
+  io.on("connection", () => {
+    console.log("Client connected")
+  })
   io.connectTimeout = Infinity;
   io.listen(SOCKET_PORT);
 
