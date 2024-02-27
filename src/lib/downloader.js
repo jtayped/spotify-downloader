@@ -31,9 +31,7 @@ async function downloadYt(ytUrl) {
     // Convert the stream to a Blob
     const blob = await streamToBlob(audioStream, "audio/mpeg");
     return blob;
-  } catch (error) {
-    console.error(`Error downloading ${ytUrl}`);
-  }
+  } catch (error) {}
 }
 
 function parseDuration(durationString) {
@@ -122,6 +120,9 @@ export async function downloadTrack(track, silent = true) {
 }
 
 export async function downloadPlaylist(playlist, progressCallback) {
+  const errors = {
+    notFound: [],
+  };
   console.log(
     `[${serverTimestamp()}]: Downloading ${
       playlist?.tracks.total
@@ -147,8 +148,12 @@ export async function downloadPlaylist(playlist, progressCallback) {
           const track = item.track;
           const blob = await downloadTrack(track);
 
-          if (!blob) return; // Check if track downloaded
-          
+          // Check if track downloaded
+          if (!blob) {
+            errors.notFound.push(track);
+            return;
+          }
+
           tracksDownloaded = tracksDownloaded + 1;
           const progress = (tracksDownloaded / playlist.tracks.total) * 100;
           progressCallback(Math.round(progress));
@@ -180,7 +185,7 @@ export async function downloadPlaylist(playlist, progressCallback) {
 
     // Generate the zip blob
     const zipBlob = await zip.generateAsync({ type: "blob" });
-    return zipBlob;
+    return { blob: zipBlob, errors };
   } catch (error) {
     console.error("Error downloading playlist:", error);
   }

@@ -1,4 +1,5 @@
 import { downloadPlaylist } from "@/lib/downloader";
+import { serverTimestamp } from "@/lib/util";
 import filenamify from "filenamify";
 import { NextResponse } from "next/server";
 
@@ -20,9 +21,17 @@ export const POST = async (request, response) => {
 
   try {
     // Call downloadPlaylist function to generate the zip file
-    const data = await downloadPlaylist(playlist, (progress) => {});
+    const { blob, errors } = await downloadPlaylist(playlist, (progress) => {});
 
-    return new Response(data, {
+    errors.notFound.map((track) => {
+      console.log(
+        `[${serverTimestamp()}]: Couldn't find ${track.name} by ${
+          track.artists[0].name
+        }...`
+      );
+    });
+
+    return new Response(blob, {
       headers: responseHeaders,
     });
   } catch (error) {

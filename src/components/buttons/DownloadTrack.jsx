@@ -9,15 +9,23 @@ const DownloadTrack = ({ track }) => {
   const [downloading, setDownloading] = useState(false);
 
   const handleDownload = async () => {
+    // Update state
     setDownloading(true);
 
-    const response = await axios.post("/api/download/track", track, {
-      responseType: "blob",
-    });
+    try {
+      // Download track
+      const response = await axios.post("/api/download/track", track, {
+        responseType: "blob",
+      });
 
-    const filename = getFilenameFromHeaders(response.headers);
-    downloadBlob(response.data, filename);
+      // Download blob with appropriate filename from headers
+      const filename = getFilenameFromHeaders(response.headers);
+      downloadBlob(response.data, filename);
+    } catch (error) {
+      console.error(error);
+    }
 
+    // Update state
     setDownloading(false);
   };
 
