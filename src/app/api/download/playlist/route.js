@@ -4,22 +4,27 @@ import { NextResponse } from "next/server";
 // import io from "@/lib/socket";
 import { SOCKET_PORT } from "@/config/app";
 import { Server } from "socket.io";
+import { serverTimestamp } from "@/lib/util";
+import { createServer } from "https";
+const { readFileSync } = require("fs");
+import { join } from "path";
 
 let io; // Singleton WebSocket server instance
 
 // Function to initialize WebSocket server
 const initializeWebSocketServer = () => {
-  io = new Server({
+  const httpsServer = createServer({
+    key: readFileSync(join(process.cwd(), "/certificates/localhost-key.pem")),
+    cert: readFileSync(join(process.cwd(), "/certificates/localhost.pem")),
+  });
+  io = new Server(httpsServer, {
     path: "/api/socket",
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
     },
   });
-  console.log("aaa")
-  io.on("connection", () => {
-    console.log("Client connected")
-  })
+
   io.connectTimeout = Infinity;
   io.listen(SOCKET_PORT);
 
@@ -27,9 +32,15 @@ const initializeWebSocketServer = () => {
 };
 
 export const POST = async (request, response) => {
+  let id;
+
   // Init socket.io if not initialised
   if (!io) {
     io = initializeWebSocketServer();
+    io.on("connection", (socket) => {
+      id = socket.id;
+      console.log(`[${serverTimestamp()}]: ${id} connected!`);
+    });
   }
   const playlist = await request.json();
 
@@ -48,9 +59,9 @@ export const POST = async (request, response) => {
 
   try {
     // Call downloadPlaylist function to generate the zip file
-    const data = await downloadPlaylist(playlist, (progress) =>
-      io.emit("progress", progress)
-    );
+    const data = await downloadPlaylist(playlist, (progress) => {
+      if (id) io.to(id).emit("progress", progress);
+    });
 
     return new Response(data, {
       headers: responseHeaders,

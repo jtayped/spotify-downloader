@@ -16,6 +16,7 @@ const DownloadPlaylist = ({ playlist }) => {
 
     const socket = io(`:${SOCKET_PORT}`, {
       path: "/api/socket",
+      secure: true,
     });
     socket.on("connect_error", () => {
       setTimeout(() => {
