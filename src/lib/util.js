@@ -8,22 +8,22 @@ export async function downloadBlob(blob, name) {
   link.click();
 }
 
-export function getElementId(url) {
-  const regex =
-    /(?:https?:\/\/)?(?:www\.)?open\.spotify\.com\/(?:track|playlist)\/(\w{22})/;
-  const match = url.match(regex);
-  if (match && match.length > 1) {
-    return match[1];
-  } else {
-    return null; // Return null if URL doesn't match expected format
-  }
-}
+export function detectSpotifyLink(url) {
+  if (typeof url !== "string") return { type: null, id: null };
 
-export function getElementType(url) {
-  if (url.includes("/track/")) {
-    return "track";
-  } else if (url.includes("/playlist/")) {
-    return "playlist";
+  // Regular expression to match various types of Spotify URLs
+  const spotifyRegex =
+    /^https?:\/\/open\.spotify\.com\/(track|album|playlist|episode|artist|user\/[a-zA-Z0-9]+)\/([a-zA-Z0-9]+)(\?.*)?$/;
+
+  // Check if the URL matches any Spotify URL pattern
+  const match = url.match(spotifyRegex);
+
+  if (match) {
+    const type = match[1];
+    const id = match[2];
+    return { type, id };
+  } else {
+    return { type: null, id: null };
   }
 }
 
