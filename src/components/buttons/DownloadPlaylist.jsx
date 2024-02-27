@@ -23,10 +23,10 @@ const DownloadPlaylist = ({ playlist }) => {
       downloadBlob(response.data, filename);
     } catch (error) {
       console.error(error);
+    } finally {
+      // Update state
+      setDownloading(false);
     }
-
-    // Update state
-    setDownloading(false);
   };
 
   if (downloading)

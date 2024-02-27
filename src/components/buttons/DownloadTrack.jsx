@@ -20,13 +20,13 @@ const DownloadTrack = ({ track }) => {
 
       // Download blob with appropriate filename from headers
       const filename = getFilenameFromHeaders(response.headers);
-      downloadBlob(response.data, filename);
+      await downloadBlob(response.data, filename);
     } catch (error) {
       console.error(error);
+    } finally {
+      // Update state
+      setDownloading(false);
     }
-
-    // Update state
-    setDownloading(false);
   };
 
   if (downloading)
