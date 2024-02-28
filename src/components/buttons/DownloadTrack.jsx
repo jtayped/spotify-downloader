@@ -1,5 +1,5 @@
 "use client";
-import { FiDownload, FiCheck } from "react-icons/fi";
+import { FiDownload } from "react-icons/fi";
 import Spinner from "../Spinner";
 import { useDownloader } from "@/context/Download";
 import Check from "../Check";
