@@ -9,7 +9,7 @@ body,
 }
 
 body {
-  @apply bg-primary;
+  background-color: rgb(10, 10, 10);
 }
 
 @layer components {
