@@ -4,7 +4,7 @@ import React from "react";
 import Search from "@/components/Search";
 import TrackInfo from "@/components/TrackInfo";
 import HomeButton from "@/components/buttons/HomeButton";
-
+import { PlayerProvider } from "@/context/Player";
 const TrackPage = async ({ params }) => {
   const { id } = params;
 
@@ -27,7 +27,9 @@ const TrackPage = async ({ params }) => {
 
         {track ? (
           <div className="bg-white/5 border border-white/10 w-full backdrop-blur-md p-5 rounded-xl flex flex-col gap-5 text-text">
-            <TrackInfo track={track} />
+            <PlayerProvider>
+              <TrackInfo track={track} />{" "}
+            </PlayerProvider>
           </div>
         ) : null}
       </main>
