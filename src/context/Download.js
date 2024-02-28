@@ -37,6 +37,20 @@ export const DownloaderProvider = ({ children }) => {
     }
   }, [currentDownload]);
 
+  const nextInQueue = () => {
+    if (queue.length !== 0) {
+      // Get first item in list
+      const next = queue[0];
+
+      // Remove the item from the state
+      setQueue((prev) => [...prev.slice(1, prev.length)]);
+      return next;
+    }
+
+    // Return null if no items in list
+    return null;
+  };
+
   // Trigger to move from track to track
   useEffect(() => {
     if (queue.length !== 0 && !downloading) {
@@ -48,7 +62,7 @@ export const DownloaderProvider = ({ children }) => {
       // On finish remove the last download
       setCurrentDownload(null);
     }
-  }, [queue, downloading]);
+  }, [queue, downloading, nextInQueue]);
 
   const downloadPlaylist = async (playlist) => {
     try {
@@ -86,20 +100,6 @@ export const DownloaderProvider = ({ children }) => {
 
   const addToDownloaded = (item) => {
     setDownloadedItems((prev) => [...prev, item]);
-  };
-
-  const nextInQueue = () => {
-    if (queue.length !== 0) {
-      // Get first item in list
-      const next = queue[0];
-
-      // Remove the item from the state
-      setQueue((prev) => [...prev.slice(1, prev.length)]);
-      return next;
-    }
-
-    // Return null if no items in list
-    return null;
   };
 
   const itemState = (item) => {
