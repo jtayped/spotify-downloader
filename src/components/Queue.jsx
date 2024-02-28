@@ -8,9 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Queue = () => {
   const [closed, setClosed] = useState(false);
-  const { queue } = useDownloader();
+  const { queue, currentDownload } = useDownloader();
 
-  const currentDownload = null;
   const toggleClose = () => {
     setClosed(!closed);
   };
