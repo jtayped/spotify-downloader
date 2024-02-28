@@ -58,7 +58,7 @@ const Queue = () => {
             <div className="flex flex-col justify-between w-full">
               <div>
                 <div className="flex items-start justify-between">
-                  <p className="font-semibold text-xl line-clamp-1">
+                  <p className="font-semibold text-lg md:text-xl line-clamp-1">
                     {currentDownload.name}
                   </p>
                   <button
