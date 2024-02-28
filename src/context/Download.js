@@ -39,8 +39,6 @@ export const DownloaderProvider = ({ children }) => {
       // Set current download to next in queue if any
       const next = nextInQueue();
       if (next) setCurrentDownload(next);
-
-      console.log(`Next in queue ${next.name}`);
     }
   }, [queue, currentDownload]);
 
