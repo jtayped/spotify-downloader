@@ -2,6 +2,7 @@
 
 import { downloadBlob, getFilenameFromHeaders } from "@/lib/util";
 import React, { createContext, useState, useContext, useEffect } from "react";
+import Queue from "@/components/Queue";
 import axios from "axios";
 
 const DownloaderContext = createContext();
@@ -115,6 +116,11 @@ export const DownloaderProvider = ({ children }) => {
 
   return (
     <DownloaderContext.Provider value={value}>
+      {true && (
+        <div className="fixed bottom-0 left-0 p-5 w-full z-10">
+          <Queue />
+        </div>
+      )}
       {children}
     </DownloaderContext.Provider>
   );
