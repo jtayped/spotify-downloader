@@ -37,19 +37,16 @@ export const DownloaderProvider = ({ children }) => {
     }
   }, [currentDownload]);
 
+  // Trigger to move from track to track
   useEffect(() => {
-    if (queue.length !== 0) {
-      if (!downloading) {
-        // Set current download to next in queue if any
-        const next = nextInQueue();
-        if (next) setCurrentDownload(next);
-
-        setDownloading(true);
-      }
-    } else {
-      if (!downloading) {
-        setCurrentDownload(null);
-      }
+    if (queue.length !== 0 && !downloading) {
+      // Set the download to next in queue
+      const next = nextInQueue();
+      setCurrentDownload(next || null);
+      setDownloading(true);
+    } else if (!downloading) {
+      // On finish remove the last download
+      setCurrentDownload(null);
     }
   }, [queue, downloading]);
 
