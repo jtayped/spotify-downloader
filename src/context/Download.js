@@ -17,6 +17,8 @@ export const DownloaderProvider = ({ children }) => {
   // Already downloaded playlists or tracks
   const [downloadedItems, setDownloadedItems] = useState([]);
 
+  const [downloading, setDownloading] = useState(false);
+
   useEffect(() => {
     const download = async () => {
       // Get downloadable type
@@ -27,7 +29,7 @@ export const DownloaderProvider = ({ children }) => {
       else if (type === "track") await downloadTrack(currentDownload);
 
       addToDownloaded(currentDownload);
-      setCurrentDownload(null);
+      setDownloading(false);
     };
 
     if (currentDownload) {
@@ -36,12 +38,20 @@ export const DownloaderProvider = ({ children }) => {
   }, [currentDownload]);
 
   useEffect(() => {
-    if (!currentDownload && queue.length !== 0) {
-      // Set current download to next in queue if any
-      const next = nextInQueue();
-      if (next) setCurrentDownload(next);
+    if (queue.length !== 0) {
+      if (!downloading) {
+        // Set current download to next in queue if any
+        const next = nextInQueue();
+        if (next) setCurrentDownload(next);
+
+        setDownloading(true);
+      }
+    } else {
+      if (!downloading) {
+        setCurrentDownload(null);
+      }
     }
-  }, [queue, currentDownload]);
+  }, [queue, downloading]);
 
   const downloadPlaylist = async (playlist) => {
     try {
@@ -67,7 +77,7 @@ export const DownloaderProvider = ({ children }) => {
 
       // Download blob with appropriate filename from headers
       const filename = getFilenameFromHeaders(response.headers);
-      await downloadBlob(response.data, filename);
+      downloadBlob(response.data, filename);
     } catch (error) {
       console.error(error);
     }
