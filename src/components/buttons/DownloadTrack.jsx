@@ -20,15 +20,14 @@ const DownloadTrack = ({ track }) => {
   }
 
   // Check if queued
-  if (itemState(track) === "queued")
+  else if (itemState(track) === "queued")
     return (
       <div className="bg-accent/10 rounded p-1.5 md:p-2.5 text-lg">
         <Spinner />
       </div>
     );
-
   // Check if downloading
-  if (itemState(track) === "downloading") {
+  else if (itemState(track) === "downloading") {
     return (
       <div className="bg-accent/80 rounded p-1.5 md:p-2.5 text-lg">
         <Spinner />
@@ -37,15 +36,16 @@ const DownloadTrack = ({ track }) => {
   }
 
   // Return download button
-  return (
-    <button
-      onClick={() => handleDownload()}
-      aria-label="Download Track"
-      className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-1.5 md:p-2.5 text-lg"
-    >
-      <FiDownload />
-    </button>
-  );
+  else
+    return (
+      <button
+        onClick={() => handleDownload()}
+        aria-label="Download Track"
+        className="text-white bg-accent hover:bg-accent/90 transition-colors rounded p-1.5 md:p-2.5 text-lg"
+      >
+        <FiDownload />
+      </button>
+    );
 };
 
 export default DownloadTrack;
