@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { PlayerProvider } from "@/context/Player";
-
+import { DownloaderProvider } from "@/context/Download";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -26,7 +26,9 @@ export default function RootLayout({ children }) {
           <div className="absolute bottom-2/3 left-[100px] w-24 h-24 bg-accent rounded-full blur-[150px] hidden md:block" />
           <div className="absolute top-10 right-24 w-32 h-32 bg-accent rounded-full blur-[150px]" />
         </div>
-        <PlayerProvider>{children}</PlayerProvider>
+        <PlayerProvider>
+          <DownloaderProvider>{children}</DownloaderProvider>
+        </PlayerProvider>
       </body>
     </html>
   );
