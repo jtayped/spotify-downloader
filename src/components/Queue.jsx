@@ -6,9 +6,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
+const PREVIEW_MAX_IMAGES = 3;
 const Queue = () => {
-  const [closed, setClosed] = useState(false);
-  const { queue, currentDownload } = useDownloader();
+  const [closed, setClosed] = useState(true);
+  const { currentDownload, queue } = useDownloader();
 
   const toggleClose = () => {
     setClosed(!closed);
@@ -20,7 +21,7 @@ const Queue = () => {
         <AnimatePresence>
           {currentDownload && (
             <motion.button
-              className="flex items-center gap-2 bg-white/10 border border-white/10 text-white backdrop-blur-md px-6 py-1.5 rounded-full"
+              className="relative flex items-center gap-2 bg-white/10 border border-white/10 text-white backdrop-blur-md p-1.5 rounded-full mb-7 shadow-2xl"
               aria-label="Open queue info"
               onClick={toggleClose}
               initial={{ y: 500, scale: 0 }}
@@ -28,8 +29,30 @@ const Queue = () => {
               exit={{ y: 500, scale: 0 }}
               transition={{ duration: 0.4, type: "spring" }}
             >
+              <ul className="flex items-center -space-x-2">
+                {queue.slice(0, PREVIEW_MAX_IMAGES).map((item, i) => (
+                  <li key={i}>
+                    <Image
+                      src={
+                        item.type === "playlist"
+                          ? item.images[0].url
+                          : item.album.images[0].url
+                      }
+                      className="rounded-full"
+                      width={20}
+                      height={20}
+                    />
+                  </li>
+                ))}
+              </ul>
+              {queue.length > PREVIEW_MAX_IMAGES ? (
+                <span className="text-sm">
+                  +{queue.length - PREVIEW_MAX_IMAGES} more
+                </span>
+              ) : null}
+
               <FiChevronUp size={20} />
-              {queue.length + 1} in queue
+              <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-white animate-ping blur-[1px]" />
             </motion.button>
           )}
         </AnimatePresence>
