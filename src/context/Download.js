@@ -59,7 +59,7 @@ export const DownloaderProvider = ({ children }) => {
 
       // Download blob with appropriate filename from headers
       const filename = getFilenameFromHeaders(response.headers);
-      // downloadBlob(response.data, filename);
+      downloadBlob(response.data, filename);
     } catch (error) {
       console.error(error);
     }
@@ -74,7 +74,7 @@ export const DownloaderProvider = ({ children }) => {
 
       // Download blob with appropriate filename from headers
       const filename = getFilenameFromHeaders(response.headers);
-      // downloadBlob(response.data, filename);
+      downloadBlob(response.data, filename);
     } catch (error) {
       console.error(error);
     }
