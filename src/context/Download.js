@@ -112,15 +112,16 @@ export const DownloaderProvider = ({ children }) => {
   };
 
   // Value object to be passed as context value
-  const value = { addDownload, currentDownload, itemState };
+  const value = { addDownload, currentDownload, itemState, queue };
 
   return (
     <DownloaderContext.Provider value={value}>
-      {true && (
-        <div className="fixed bottom-0 left-0 p-5 w-full z-10">
-          <Queue />
-        </div>
-      )}
+      <div
+        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-[700px] z-10"
+        style={{ padding: 12 }}
+      >
+        <Queue />
+      </div>
       {children}
     </DownloaderContext.Provider>
   );
