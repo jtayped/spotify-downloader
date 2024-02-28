@@ -2,6 +2,7 @@
 import { FiDownload, FiCheck } from "react-icons/fi";
 import Spinner from "../Spinner";
 import { useDownloader } from "@/context/Download";
+import Check from "../Check";
 
 const DownloadTrack = ({ track }) => {
   const { addDownload, itemState } = useDownloader();
@@ -14,7 +15,7 @@ const DownloadTrack = ({ track }) => {
   if (itemState(track) === "downloaded") {
     return (
       <div className="bg-accent/50 rounded p-1.5 md:p-2.5 text-lg">
-        <FiCheck />
+        <Check />
       </div>
     );
   }
