@@ -41,6 +41,7 @@ const Queue = () => {
                       className="rounded-full"
                       width={20}
                       height={20}
+                      alt={`${currentDownload.type} cover`}
                     />
                   </li>
                 ))}
@@ -54,6 +55,7 @@ const Queue = () => {
                     className="rounded-full"
                     width={20}
                     height={20}
+                    alt={`${currentDownload.type} cover`}
                   />
                 </li>
               </ul>
