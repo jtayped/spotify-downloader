@@ -13,6 +13,9 @@ export const DownloaderProvider = ({ children }) => {
   // Current track or playlist being downloaded
   const [currentDownload, setCurrentDownload] = useState(null);
 
+  // Already downloaded playlists or tracks
+  const [downloadedItems, setDownloadedItems] = useState([]);
+
   useEffect(() => {
     const download = async () => {
       // Get downloadable type
@@ -22,6 +25,7 @@ export const DownloaderProvider = ({ children }) => {
       if (type === "playlist") await downloadPlaylist(currentDownload);
       else if (type === "track") await downloadTrack(currentDownload);
 
+      addToDownloaded(currentDownload);
       setCurrentDownload(null);
     };
 
@@ -74,6 +78,10 @@ export const DownloaderProvider = ({ children }) => {
     setQueue((prev) => [...prev, spotifyItem]);
   };
 
+  const addToDownloaded = (item) => {
+    setDownloadedItems((prev) => [...prev, item]);
+  };
+
   const nextInQueue = () => {
     if (queue.length !== 0) {
       // Get first item in list
@@ -89,6 +97,12 @@ export const DownloaderProvider = ({ children }) => {
   };
 
   const itemState = (item) => {
+    // Check if already downloaded
+    const downloadedItem = downloadedItems.find(
+      (downloadedItem) => item.id === downloadedItem.id
+    );
+    if (downloadedItem) return "downloaded";
+
     if (item.id === currentDownload?.id) return "downloading";
 
     // Check if
