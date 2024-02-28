@@ -44,6 +44,18 @@ const Queue = () => {
                     />
                   </li>
                 ))}
+                <li>
+                  <Image
+                    src={
+                      currentDownload.type === "playlist"
+                        ? currentDownload.images[0].url
+                        : currentDownload.album.images[0].url
+                    }
+                    className="rounded-full"
+                    width={20}
+                    height={20}
+                  />
+                </li>
               </ul>
               {queue.length > PREVIEW_MAX_IMAGES ? (
                 <span className="text-sm">
