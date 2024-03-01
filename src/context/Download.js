@@ -69,7 +69,6 @@ export const DownloaderProvider = ({ children }) => {
       // Download playlist
       const response = await axios.post("/api/download/playlist", playlist, {
         responseType: "blob",
-        timeout: 0,
       });
 
       // Download blob with appropriate filename from headers

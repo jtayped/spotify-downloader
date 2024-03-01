@@ -25,7 +25,7 @@ export async function downloadPlaylist(playlist, silent = true) {
     const zip = new JSZip();
 
     // Download tracks by chunks of n size
-    const chunkSize = 3;
+    const chunkSize = 25;
     const totalChunks = Math.ceil(items.length / chunkSize);
 
     // Iterate over chunks
@@ -77,7 +77,7 @@ export async function downloadTrack(track, silent = true) {
     let buffer = await downloadYT(id);
 
     // Add metadata
-    buffer = await addMetadata(buffer, track);
+    // buffer = await addMetadata(buffer, track);
 
     // Create filename
     const filename =
@@ -138,8 +138,36 @@ async function downloadYT(id) {
     const audioStream = ytdl.downloadFromInfo(info, { format: audioFormat });
 
     // Convert to mp3
-    const buffer = convertToMp3(audioStream);
+    // const buffer = convertToMp3(audioStream);
+    const buffer = streamToBuffer(audioStream);
     return buffer;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function streamToBuffer(stream) {
+  try {
+    return new Promise((resolve, reject) => {
+      const mp3Buffer = [];
+      const outputStream = new PassThrough();
+      outputStream.on("error", (err) => {
+        reject(err);
+      });
+      outputStream.on("end", () => {
+        const finalBuffer = Buffer.concat(mp3Buffer);
+        resolve(finalBuffer);
+      });
+
+      stream.pipe(outputStream);
+      outputStream.on("data", (chunk) => {
+        mp3Buffer.push(chunk);
+      });
+
+      outputStream.on("error", (err) => {
+        reject(err);
+      });
+    });
   } catch (error) {
     console.error(error);
   }
