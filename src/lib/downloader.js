@@ -2,10 +2,11 @@ const ytsr = require("ytsr");
 const ytdl = require("ytdl-core");
 const JSZip = require("jszip");
 const sharp = require("sharp");
+import NodeID3, { TagConstants } from "node-id3";
 import filenamify from "filenamify";
 import { serverTimestamp } from "./util";
 import axios from "axios";
-import { ID3Writer } from "browser-id3-writer";
+import { promises } from "fs";
 
 function streamToBuffer(stream) {
   return new Promise((resolve, reject) => {
@@ -141,23 +142,25 @@ async function id3Tags(buffer, track) {
   try {
     const cover = await fetchCover(track.album.images[0].url);
 
-    const writer = new ID3Writer(buffer);
-    writer.setFrame("TIT2", track.name); // Title
-    writer.setFrame("TPE1", [track.artists.map((artist) => artist.name)]); // Artist
-    writer.setFrame("TALB", track.album.name); // Album
-    writer.setFrame("APIC", {
-      type: 3,
-      data: cover.buffer,
-      description: "Track cover",
-    });
+    const tags = {
+      title: track.name,
+      artist: track.artists[0].name,
+      album: track.album.name,
+      image: {
+        mime: "image/jpeg",
+        type: {
+          id: TagConstants.AttachedPicture.PictureType.FRONT_COVER,
+        },
+        description: `${track.name} cover`,
+        imageBuffer: cover,
+      },
+    };
 
-    writer.addTag();
+    const taggedBuffer = NodeID3.write(tags, buffer);
 
-    const taggedBuffer = Buffer.from(writer.arrayBuffer);
     return taggedBuffer;
   } catch (error) {
     console.error("Error adding ID3 tags:", error);
-    throw error;
   }
 }
 
@@ -170,10 +173,10 @@ export async function downloadTrack(track, silent = true) {
     const ytUrl = await findTrackYt(track);
     if (!ytUrl) return;
 
-    const buffer = await downloadYt(ytUrl);
-    const taggedBuffer = await id3Tags(buffer, track);
+    let buffer = await downloadYt(ytUrl);
+    buffer = await id3Tags(buffer, track);
 
-    return taggedBuffer;
+    return buffer;
   } catch (error) {
     console.error("Error downloading track:", error);
   }
