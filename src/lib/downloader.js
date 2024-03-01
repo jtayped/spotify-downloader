@@ -174,7 +174,7 @@ export async function downloadTrack(track, silent = true) {
     if (!ytUrl) return;
 
     let buffer = await downloadYt(ytUrl);
-    buffer = await id3Tags(buffer, track);
+    // buffer = await id3Tags(buffer, track);
 
     return buffer;
   } catch (error) {
