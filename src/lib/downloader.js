@@ -6,7 +6,8 @@ import NodeID3, { TagConstants } from "node-id3";
 import filenamify from "filenamify";
 import { serverTimestamp } from "./util";
 import axios from "axios";
-import { promises } from "fs";
+const ffmpeg = require("fluent-ffmpeg");
+import { PassThrough } from "stream";
 
 function streamToBuffer(stream) {
   return new Promise((resolve, reject) => {
@@ -40,18 +41,37 @@ async function downloadYt(ytUrl) {
     // Download the audio
     const audioStream = ytdl.downloadFromInfo(info, { format: audioFormat });
 
-    // Create a promise that resolves when the stream finishes downloading
-    const downloadFinished = new Promise((resolve, reject) => {
-      audioStream.on("end", resolve());
-      audioStream.on("error", reject());
+    // Create a PassThrough stream to capture the output
+    const outputStream = new PassThrough();
+
+    // Initialize ffmpeg with the input stream
+    const command = ffmpeg(audioStream);
+
+    // Set output format to MP3
+    command.outputFormat("mp3");
+
+    // Set audio codec
+    command.audioCodec("libmp3lame");
+
+    // Pipe ffmpeg output to the PassThrough stream
+    command.pipe(outputStream);
+
+    // Capture the output in a buffer
+    const chunks = [];
+    outputStream.on("data", (chunk) => {
+      chunks.push(chunk);
     });
 
-    // Wait for the download to finish
-    await downloadFinished;
+    return new Promise((resolve, reject) => {
+      outputStream.on("end", () => {
+        const resultBuffer = Buffer.concat(chunks);
+        resolve(resultBuffer);
+      });
 
-    // Convert the stream to a Blob
-    const buffer = await streamToBuffer(audioStream);
-    return buffer;
+      outputStream.on("error", reject);
+
+      command.on("error", reject);
+    });
   } catch (error) {
     console.error(error);
   }
@@ -144,14 +164,15 @@ async function id3Tags(buffer, track) {
 
     const tags = {
       title: track.name,
-      artist: track.artists[0].name,
+      artist: track.artists.map((artist) => artist.name).join("; "),
       album: track.album.name,
+      trackNumber: track.track_number,
+      releaseTime: track.album.release_date,
       image: {
         mime: "image/jpeg",
         type: {
-          id: TagConstants.AttachedPicture.PictureType.FRONT_COVER,
+          id: 3,
         },
-        description: `${track.name} cover`,
         imageBuffer: cover,
       },
     };
@@ -174,7 +195,7 @@ export async function downloadTrack(track, silent = true) {
     if (!ytUrl) return;
 
     let buffer = await downloadYt(ytUrl);
-    // buffer = await id3Tags(buffer, track);
+    buffer = await id3Tags(buffer, track);
 
     return buffer;
   } catch (error) {
