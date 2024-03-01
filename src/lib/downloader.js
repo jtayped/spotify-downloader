@@ -140,7 +140,6 @@ async function fetchCover(url) {
 async function id3Tags(buffer, track) {
   try {
     const cover = await fetchCover(track.album.images[0].url);
-    console.log(cover.buffer);
 
     const writer = new ID3Writer(buffer);
     writer.setFrame("TIT2", track.name); // Title
@@ -154,7 +153,6 @@ async function id3Tags(buffer, track) {
 
     writer.addTag();
 
-    // console.log(writer);
     const taggedBuffer = Buffer.from(writer.arrayBuffer);
     return taggedBuffer;
   } catch (error) {
@@ -174,7 +172,6 @@ export async function downloadTrack(track, silent = true) {
 
     const buffer = await downloadYt(ytUrl);
     const taggedBuffer = await id3Tags(buffer, track);
-    console.log(taggedBuffer);
 
     return taggedBuffer;
   } catch (error) {

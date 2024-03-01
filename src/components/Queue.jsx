@@ -30,21 +30,25 @@ const Queue = () => {
               transition={{ duration: 0.4, type: "spring" }}
             >
               <ul className="flex items-center -space-x-2">
-                {queue.slice(0, PREVIEW_MAX_IMAGES).map((item, i) => (
-                  <li key={i}>
-                    <Image
-                      src={
-                        item.type === "playlist"
-                          ? item.images[0].url
-                          : item.album.images[0].url
-                      }
-                      className="rounded-full"
-                      width={20}
-                      height={20}
-                      alt={`${currentDownload.type} cover`}
-                    />
-                  </li>
-                ))}
+                {queue
+                  .slice(0, PREVIEW_MAX_IMAGES)
+                  .reverse()
+                  .map((item, i) => (
+                    <li key={i}>
+                      <Image
+                        src={
+                          item.type === "playlist"
+                            ? item.images[0].url
+                            : item.album.images[0].url
+                        }
+                        className="rounded-full"
+                        width={20}
+                        height={20}
+                        priority={1}
+                        alt={`${currentDownload.type} cover`}
+                      />
+                    </li>
+                  ))}
                 <li>
                   <Image
                     src={
