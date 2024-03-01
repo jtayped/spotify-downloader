@@ -25,7 +25,7 @@ export async function downloadPlaylist(playlist, silent = true) {
     const zip = new JSZip();
 
     // Download tracks by chunks of n size
-    const chunkSize = 5;
+    const chunkSize = 3;
     const totalChunks = Math.ceil(items.length / chunkSize);
 
     // Iterate over chunks
