@@ -1,145 +1,207 @@
-const ytsr = require("ytsr");
-const ytdl = require("ytdl-core");
-const JSZip = require("jszip");
-const sharp = require("sharp");
-import NodeID3, { TagConstants } from "node-id3";
 import filenamify from "filenamify";
 import { serverTimestamp } from "./util";
 import axios from "axios";
+import sharp from "sharp";
+const JSZip = require("jszip");
+const ytSearch = require("youtube-sr").default;
+const ytdl = require("ytdl-core");
 const ffmpeg = require("fluent-ffmpeg");
-import { PassThrough } from "stream";
+const NodeID3 = require("node-id3");
+const { PassThrough } = require("stream");
 
-function streamToBuffer(stream) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
+// MAIN FUNCTIONS
+export async function downloadPlaylist(playlist, silent = true) {
+  try {
+    if (!silent) {
+      console.log(
+        `[${serverTimestamp()}]: Downloading ${
+          playlist?.tracks.total
+        } tracks from ${playlist?.name}...`
+      );
+    }
+    const items = playlist.tracks.items;
 
-    stream.on("data", (chunk) => {
-      chunks.push(chunk);
-    });
+    // Create zip file
+    const zip = new JSZip();
 
-    stream.on("end", () => {
-      const buffer = Buffer.concat(chunks);
-      resolve(buffer);
-    });
+    // Download tracks by chunks of n size
+    const chunkSize = 5;
+    const totalChunks = Math.ceil(items.length / chunkSize);
 
-    stream.on("error", (error) => {
-      reject(error);
-    });
-  });
+    // Iterate over chunks
+    for (let i = 0; i < totalChunks; i++) {
+      const chunkStart = i * chunkSize;
+      const chunkEnd = Math.min(chunkStart + chunkSize, items.length);
+      const chunkItems = items.slice(chunkStart, chunkEnd);
+
+      // Push download promises to the array
+      const downloadPromises = [];
+      for (const item of chunkItems) {
+        downloadPromises.push(downloadTrack(item.track));
+      }
+
+      // Wait for all downloads in the current chunk to complete
+      const downloads = await Promise.all(downloadPromises);
+
+      // Add downloaded tracks to the zip
+      downloads.forEach((download) => {
+        if (download) {
+          const { filename, buffer } = download;
+          zip.file(filename, buffer);
+        }
+      });
+    }
+
+    // Get zip blob
+    const blob = await zip.generateAsync({ type: "blob" });
+    const filename = pathNamify(playlist.name) + ".zip";
+    return { blob, filename };
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-async function downloadYt(ytUrl) {
+export async function downloadTrack(track, silent = true) {
   try {
-    // Get video info
-    const info = await ytdl.getInfo(ytUrl);
+    if (!silent && track) {
+      console.log(
+        `[${serverTimestamp()}]: Downloading ${track.name} by ${
+          track.artists[0].name
+        }...`
+      );
+    }
+    // Find YouTube URL
+    const id = await findYtId(track);
+
+    // Download YouTube URL
+    let buffer = await downloadYT(id);
+
+    // Add metadata
+    buffer = await addMetadata(buffer, track);
+
+    // Create filename
+    const filename =
+      pathNamify(`${track.name} by ${track.artists[0].name}`) + ".mp3";
+
+    return { buffer, filename };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// SUB FUNCTIONS
+async function findYtId(track) {
+  try {
+    const query = `${track.name} by ${track.artists[0].name} official`;
+
+    // Get search data
+    const videos = await ytSearch.search(query, { limit: 5, type: "video" });
+
+    // Find closest to the track's duration
+    let closestDuration = null;
+    let closestVideoUrl = null;
+
+    for (const video of videos) {
+      // Check if duration is exact
+      if (video.duration === track.duration_ms) {
+        return video.id;
+      }
+
+      // Check if closest duration
+      if (
+        !closestDuration ||
+        Math.abs(video.duration - track.duration_ms) <
+          Math.abs(closestDuration - track.duration_ms)
+      ) {
+        closestDuration = video.duration;
+        closestVideoUrl = video.id;
+      }
+    }
+
+    return closestVideoUrl;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function downloadYT(id) {
+  try {
+    // Get info
+    const info = await ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`);
 
     // Choose the highest quality audio format
     const audioFormat = ytdl.chooseFormat(info.formats, {
       quality: "highestaudio",
     });
 
-    // Download the audio
+    // Get audio stream
     const audioStream = ytdl.downloadFromInfo(info, { format: audioFormat });
 
-    // Create a PassThrough stream to capture the output
-    const outputStream = new PassThrough();
+    // Convert to mp3
+    const buffer = convertToMp3(audioStream);
+    return buffer;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-    // Initialize ffmpeg with the input stream
-    const command = ffmpeg(audioStream);
-
-    // Set output format to MP3
-    command.outputFormat("mp3");
-
-    // Set audio codec
-    command.audioCodec("libmp3lame");
-
-    // Pipe ffmpeg output to the PassThrough stream
-    command.pipe(outputStream);
-
-    // Capture the output in a buffer
-    const chunks = [];
-    outputStream.on("data", (chunk) => {
-      chunks.push(chunk);
-    });
-
+async function convertToMp3(stream) {
+  try {
     return new Promise((resolve, reject) => {
-      outputStream.on("end", () => {
-        const resultBuffer = Buffer.concat(chunks);
-        resolve(resultBuffer);
+      const mp3Buffer = [];
+
+      const outputStream = new PassThrough();
+
+      // Convert MP4 stream to MP3
+      ffmpeg(stream)
+        .format("mp3")
+        .audioCodec("libmp3lame")
+        .on("error", (err) => {
+          reject(err);
+        })
+        .on("end", () => {
+          const finalBuffer = Buffer.concat(mp3Buffer);
+          resolve(finalBuffer);
+        })
+        .pipe(outputStream);
+
+      outputStream.on("data", (chunk) => {
+        mp3Buffer.push(chunk);
       });
 
-      outputStream.on("error", reject);
-
-      command.on("error", reject);
+      outputStream.on("error", (err) => {
+        reject(err);
+      });
     });
   } catch (error) {
     console.error(error);
   }
 }
 
-function parseDuration(durationString) {
-  // Split the string by ":" to separate hours, minutes, and seconds
-  const durationArray = durationString.split(":").map(Number);
-
-  // If the array has only one element, it represents seconds
-  if (durationArray.length === 1) {
-    return durationArray[0];
-  }
-
-  // If the array has two elements, they represent minutes and seconds
-  if (durationArray.length === 2) {
-    return durationArray[0] * 60 + durationArray[1];
-  }
-
-  // If the array has three elements, they represent hours, minutes, and seconds
-  if (durationArray.length === 3) {
-    return durationArray[0] * 3600 + durationArray[1] * 60 + durationArray[2];
-  }
-
-  // Return -1 if the duration format is not recognized
-  return -1;
-}
-
-export async function findTrackYt(track) {
-  const query = `${track.name} by ${track.artists[0].name}`;
-  const trackDuration = track.duration_ms / 1000;
-
+async function addMetadata(buffer, track) {
   try {
-    // Filter the search results to include only videos
-    const filter = await ytsr.getFilters(query);
-    const videoFilter = filter.get("Type").get("Video");
+    // Fetch cover
+    const cover = await fetchCover(track.album.images[0].url);
 
-    const options = {
-      pages: 2,
+    // Extrack tags from the track data
+    const tags = {
+      title: track.name,
+      artist: track.artists.map((artist) => artist.name).join("; "),
+      album: track.album.name,
+      trackNumber: track.track_number,
+      releaseTime: track.album.release_date,
+      image: {
+        mime: "image/jpeg",
+        type: {
+          id: 3,
+        },
+        imageBuffer: cover,
+      },
     };
-    const result = await ytsr(videoFilter.url, options);
-    const searchResults = result.items;
 
-    // Skip if no results were found
-    if (searchResults.length === 0) return;
-
-    let closestDuration = null;
-    let closestVideoUrl = null;
-    for (const result of searchResults) {
-      if (result.type === "shelf") continue;
-      let { duration, url } = result;
-
-      // Check if required fields are present
-      if (!duration || !url) continue;
-
-      // Calculate the closest duration
-      const durationInSeconds = parseDuration(duration);
-      if (
-        !closestDuration ||
-        Math.abs(durationInSeconds - trackDuration) <
-          Math.abs(closestDuration - trackDuration)
-      ) {
-        closestDuration = durationInSeconds;
-        closestVideoUrl = url;
-      }
-    }
-
-    return closestVideoUrl;
+    // Add it to the buffer
+    const taggedBuffer = NodeID3.write(tags, buffer);
+    return taggedBuffer;
   } catch (error) {
     console.error(error);
   }
@@ -158,119 +220,7 @@ async function fetchCover(url) {
   }
 }
 
-async function id3Tags(buffer, track) {
-  try {
-    const cover = await fetchCover(track.album.images[0].url);
-
-    const tags = {
-      title: track.name,
-      artist: track.artists.map((artist) => artist.name).join("; "),
-      album: track.album.name,
-      trackNumber: track.track_number,
-      releaseTime: track.album.release_date,
-      image: {
-        mime: "image/jpeg",
-        type: {
-          id: 3,
-        },
-        imageBuffer: cover,
-      },
-    };
-
-    const taggedBuffer = NodeID3.write(tags, buffer);
-
-    return taggedBuffer;
-  } catch (error) {
-    console.error("Error adding ID3 tags:", error);
-  }
-}
-
-export async function downloadTrack(track, silent = true) {
-  if (!silent) {
-    console.log(`[${serverTimestamp()}]: Downloading ${track?.name}...`);
-  }
-
-  try {
-    const ytUrl = await findTrackYt(track);
-    if (!ytUrl) return;
-
-    let buffer = await downloadYt(ytUrl);
-    buffer = await id3Tags(buffer, track);
-
-    return buffer;
-  } catch (error) {
-    console.error("Error downloading track:", error);
-  }
-}
-
-export async function downloadPlaylist(playlist, progressCallback) {
-  const errors = {
-    notFound: [],
-  };
-  console.log(
-    `[${serverTimestamp()}]: Downloading ${
-      playlist?.tracks.total
-    } tracks from ${playlist?.name}...`
-  );
-
-  try {
-    const { items } = playlist.tracks;
-
-    // Split the items array into chunks of 50 tracks each
-    const chunkSize = 25;
-    const chunks = [];
-    for (let i = 0; i < items.length; i += chunkSize) {
-      chunks.push(items.slice(i, i + chunkSize));
-    }
-
-    let tracksDownloaded = 0;
-    // Process each chunk in parallel
-    const downloadPromises = chunks.map(async (chunk) => {
-      // Download each track in the chunk
-      const trackData = await Promise.all(
-        chunk.map(async (item) => {
-          const track = item.track;
-          const buffer = await downloadTrack(track);
-
-          // Check if track downloaded
-          if (!buffer) {
-            errors.notFound.push(track);
-            return;
-          }
-
-          tracksDownloaded = tracksDownloaded + 1;
-          const progress = (tracksDownloaded / playlist.tracks.total) * 100;
-          progressCallback(Math.round(progress));
-
-          const name = `${track.name} by ${track.artists[0].name}`;
-          return { name, buffer }; // Return object with track name and buffer
-        })
-      );
-      return trackData.filter(Boolean); // Remove undefined values
-    });
-
-    // Wait for all chunks to be processed
-    const allTrackData = await Promise.all(downloadPromises);
-
-    // Create a zip file and add blobs
-    const zip = new JSZip();
-    allTrackData.forEach((chunkTrackData) => {
-      chunkTrackData.forEach((data) => {
-        const { name, buffer } = data;
-        zip.file(
-          `${filenamify(name).replace(
-            /[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu,
-            ""
-          )}.mp3`,
-          buffer
-        );
-      });
-    });
-
-    // Generate the zip blob
-    const zipBlob = await zip.generateAsync({ type: "blob" });
-    return { blob: zipBlob, errors };
-  } catch (error) {
-    console.error("Error downloading playlist:", error);
-  }
+// UTIL FUNCTIONS
+function pathNamify(path) {
+  return filenamify(path).replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, "");
 }

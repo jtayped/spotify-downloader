@@ -1,29 +1,24 @@
 import { downloadTrack } from "@/lib/downloader";
-import filenamify from "filenamify";
 import { NextResponse } from "next/server";
 
 export const POST = async (request, response) => {
   const track = await request.json();
 
-  const name = `${track.name} by ${track.artists[0].name}`;
-  const responseHeaders = new Headers(response.headers);
-
-  responseHeaders.set(
-    "Content-Disposition",
-    `attachment; filename="${filenamify(name).replace(
-      /[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu,
-      ""
-    )}.mp3"`
-  );
-  responseHeaders.set(
-    "User-Agent",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
-  );
-
   try {
     // Call downloadPlaylist function to generate the zip file
-    const data = await downloadTrack(track, false);
-    return new Response(data, {
+    const { buffer, filename } = await downloadTrack(track, false);
+
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.set(
+      "Content-Disposition",
+      `attachment; filename="${filename}"`
+    );
+    responseHeaders.set(
+      "User-Agent",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
+    );
+
+    return new Response(buffer, {
       headers: responseHeaders,
     });
   } catch (error) {
