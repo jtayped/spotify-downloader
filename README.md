@@ -1,10 +1,55 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<br/>
+<p align="center">
+  <a href="https://github.com/jtayped/spotify-downloader">
+    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Spotify Downloader</h3>
+
+  <p align="center">
+    A website where you can download Spotify playlists or tracks, developed with Next JS.
+    <br/>
+    <br/>
+    <a href="https://github.com/jtayped/spotify-downloader"><strong>Explore the docs »</strong></a>
+    <br/>
+    <br/>
+    <a href="https://github.com/jtayped/spotify-downloader">View Demo</a>
+    .
+    <a href="https://github.com/jtayped/spotify-downloader/issues">Report Bug</a>
+    .
+    <a href="https://github.com/jtayped/spotify-downloader/issues">Request Feature</a>
+  </p>
+</p>
+
+![Contributors](https://img.shields.io/github/contributors/jtayped/spotify-downloader?color=dark-green) ![Issues](https://img.shields.io/github/issues/jtayped/spotify-downloader) ![License](https://img.shields.io/github/license/jtayped/spotify-downloader) 
+
+## Table Of Contents
+
+* [About the Project](#about-the-project)
+* [Built With](#built-with)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Installation](#installation)
+* [Usage](#usage)
+* [Roadmap](#roadmap)
+* [Contributing](#contributing)
+* [License](#license)
+
+## About The Project
+
+![Screen Shot](images/main.png)
+
+A handy tool for Spotify lovers. It has a simple layout, lets you listen to a song before saving it, and adds metadata to your downloads. It saves you time organizing your music. Give it a try!
+
+## Built With
+
+This app is built with Next JS, utilising modules such as: ytdl-core, youtube-sr, and most notably ffmpeg.wasm.
 
 ## Getting Started
 
 First, run the development server:
 
-```bash
+```sh
 npm run dev
 # or
 yarn dev
@@ -14,23 +59,41 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Prerequisites
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+You must have Node JS installed
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Installation
 
-## Learn More
+1. Aquire a Spotify Client ID and Secret from a Spotify API app.
+2. Create an env file ".env.local" and add each one to CLIENT_ID & CLEINT_SECRET.
+3. Open https://localhost:3000 with your browser to see the result.
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+When greeted at the home screen, enter a playlist or track link. On load, you will be able to download all the available content. If you have any doubts, you can preview the track by simply playing it in the UI.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Roadmap
 
-## Deploy on Vercel
+See the [open issues](https://github.com/jtayped/spotify-downloader/issues) for a list of proposed features (and known issues).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/jtayped/spotify-downloader/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
+* Please make sure you check your spelling and grammar.
+* Create individual PR for each suggestion.
+* Please also read through the [Code Of Conduct](https://github.com/jtayped/spotify-downloader/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
+
+### Creating A Pull Request
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+Distributed under the MIT License. See [LICENSE](https://github.com/jtayped/spotify-downloader/blob/main/LICENSE.md) for more information.
+
