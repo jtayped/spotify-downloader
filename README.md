@@ -13,7 +13,7 @@
     <a href="https://github.com/jtayped/spotify-downloader"><strong>Explore the docs »</strong></a>
     <br/>
     <br/>
-    <a href="https://github.com/jtayped/spotify-downloader">View Demo</a>
+    <a href="https://spotify.joeltaylor.business/">View Demo</a>
     .
     <a href="https://github.com/jtayped/spotify-downloader/issues">Report Bug</a>
     .
@@ -21,19 +21,19 @@
   </p>
 </p>
 
-![Contributors](https://img.shields.io/github/contributors/jtayped/spotify-downloader?color=dark-green) ![Issues](https://img.shields.io/github/issues/jtayped/spotify-downloader) ![License](https://img.shields.io/github/license/jtayped/spotify-downloader) 
+![Contributors](https://img.shields.io/github/contributors/jtayped/spotify-downloader?color=dark-green) ![Issues](https://img.shields.io/github/issues/jtayped/spotify-downloader) ![License](https://img.shields.io/github/license/jtayped/spotify-downloader)
 
 ## Table Of Contents
 
-* [About the Project](#about-the-project)
-* [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
+- [About the Project](#about-the-project)
+- [Built With](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## About The Project
 
@@ -80,10 +80,11 @@ See the [open issues](https://github.com/jtayped/spotify-downloader/issues) for 
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/jtayped/spotify-downloader/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
-* Please make sure you check your spelling and grammar.
-* Create individual PR for each suggestion.
-* Please also read through the [Code Of Conduct](https://github.com/jtayped/spotify-downloader/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
+
+- If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/jtayped/spotify-downloader/issues/new) to discuss it, or directly create a pull request after you edit the _README.md_ file with necessary changes.
+- Please make sure you check your spelling and grammar.
+- Create individual PR for each suggestion.
+- Please also read through the [Code Of Conduct](https://github.com/jtayped/spotify-downloader/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
 
 ### Creating A Pull Request
 
@@ -96,4 +97,3 @@ Contributions are what make the open source community such an amazing place to b
 ## License
 
 Distributed under the MIT License. See [LICENSE](https://github.com/jtayped/spotify-downloader/blob/main/LICENSE.md) for more information.
-
