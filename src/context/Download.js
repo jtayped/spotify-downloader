@@ -1,6 +1,6 @@
 "use client";
 
-import { downloadBlob, getFilenameFromHeaders } from "@/lib/util";
+import { downloadBlob, getFilenameFromHeaders } from "@/lib/utils";
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Queue from "@/components/Queue";
 import axios from "axios";
@@ -22,7 +22,11 @@ export const DownloaderProvider = ({ children }) => {
   // Already downloaded playlists or tracks
   const [downloadedItems, setDownloadedItems] = useState([]);
 
+  // Trigger for downloading state
   const [downloading, setDownloading] = useState(false);
+
+  // Progress
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const download = async () => {
@@ -33,9 +37,11 @@ export const DownloaderProvider = ({ children }) => {
       if (type === "playlist") {
         const { blob, filename } = await downloadPlaylist(currentDownload);
         await downloadBlob(blob, filename);
+        setProgress(0);
       } else if (type === "track") {
         const { buffer, filename } = await downloadTrack(currentDownload);
         await downloadBlob(buffer, filename);
+        setProgress(0);
       }
 
       addToDownloaded(currentDownload);
@@ -86,7 +92,7 @@ export const DownloaderProvider = ({ children }) => {
       await ffmpeg.load();
 
       // Download tracks by chunks of n size
-      const chunkSize = 25;
+      const chunkSize = 10;
       const totalChunks = Math.ceil(items.length / chunkSize);
 
       // Iterate over chunks
@@ -98,7 +104,15 @@ export const DownloaderProvider = ({ children }) => {
         // Push download promises to the array
         const downloadPromises = [];
         for (const item of chunkItems) {
-          downloadPromises.push(downloadTrack(item.track, ffmpeg));
+          async function downloadWithProgress() {
+            const track = await downloadTrack(
+              { ...item.track, speed: playlist.speed },
+              ffmpeg
+            );
+            setProgress((prev) => prev + (1 / playlist.tracks.total) * 100);
+            return track;
+          }
+          downloadPromises.push(downloadWithProgress());
         }
 
         // Wait for all downloads in the current chunk to complete
@@ -116,6 +130,7 @@ export const DownloaderProvider = ({ children }) => {
       // Get zip blob
       const blob = await zip.generateAsync({ type: "blob" });
       const filename = pathNamify(playlist.name) + ".zip";
+
       return { blob, filename };
     } catch (error) {
       console.error(error);
@@ -128,10 +143,16 @@ export const DownloaderProvider = ({ children }) => {
       const response = await axios.post("/api/download/track", track, {
         responseType: "blob",
       });
+      let buffer = response.data;
 
-      // Convert to mp3
-      let buffer = await convert(response.data, ffmpeg);
-      buffer = await addMetadata(buffer, track);
+      // If mode == slow it should conver to mp3 and add metadata
+      if (track.speed === "slow") {
+        // Convert to mp3
+        buffer = await convert(response.data, ffmpeg);
+        if (!buffer) return; // If any errors occur just return null
+
+        buffer = await addMetadata(buffer, track);
+      }
 
       // Download blob with appropriate filename from headers
       const filename = getFilenameFromHeaders(response.headers);
@@ -207,8 +228,8 @@ export const DownloaderProvider = ({ children }) => {
     }
   }
 
-  const addDownload = (spotifyItem) => {
-    setQueue((prev) => [...prev, spotifyItem]);
+  const addDownload = (spotifyItem, speed) => {
+    setQueue((prev) => [...prev, { ...spotifyItem, speed }]);
   };
 
   const addToDownloaded = (item) => {
@@ -232,7 +253,7 @@ export const DownloaderProvider = ({ children }) => {
   };
 
   // Value object to be passed as context value
-  const value = { addDownload, currentDownload, itemState, queue };
+  const value = { addDownload, currentDownload, itemState, queue, progress };
 
   return (
     <DownloaderContext.Provider value={value}>

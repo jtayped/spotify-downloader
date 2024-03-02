@@ -1,5 +1,5 @@
 import filenamify from "filenamify";
-import { serverTimestamp } from "./util";
+import { serverTimestamp } from "./utils";
 import axios from "axios";
 import sharp from "sharp";
 const JSZip = require("jszip");

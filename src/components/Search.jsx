@@ -1,6 +1,6 @@
 "use client";
 
-import { detectSpotifyLink } from "@/lib/util";
+import { detectSpotifyLink } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";

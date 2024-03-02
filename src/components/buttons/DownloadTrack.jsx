@@ -8,7 +8,7 @@ const DownloadTrack = ({ track }) => {
   const { addDownload, itemState } = useDownloader();
 
   const handleDownload = () => {
-    addDownload(track);
+    addDownload(track, "slow");
   };
 
   // Check if downloaded
