@@ -19,81 +19,76 @@ const Queue = () => {
   if (closed)
     return (
       <div className="w-full flex justify-center mb-7">
-        <AnimatePresence>
-          {currentDownload ? (
-            <motion.button
-              className="relative flex items-center gap-2 bg-white/10 border border-white/10 text-white backdrop-blur-md p-1.5 rounded-full shadow-2xl"
-              aria-label="Open queue info"
-              onClick={toggleClose}
-              initial={{ y: 500, scale: 0 }}
-              animate={{ y: 0, scale: 1 }}
-              exit={{ y: 500, scale: 0 }}
-              transition={{ duration: 0.4, type: "spring" }}
-            >
-              <ul className="flex items-center -space-x-2">
-                {queue
-                  .slice(0, PREVIEW_MAX_IMAGES)
-                  .reverse()
-                  .map((item, i) => (
-                    <li key={i}>
-                      <Image
-                        src={
-                          item.type === "playlist"
-                            ? item.images[0].url
-                            : item.album.images[0].url
-                        }
-                        className="rounded-full"
-                        width={20}
-                        height={20}
-                        priority={1}
-                        alt={`${currentDownload.type} cover`}
-                      />
-                    </li>
-                  ))}
-                <li>
-                  <Image
-                    src={
-                      currentDownload.type === "playlist"
-                        ? currentDownload.images[0].url
-                        : currentDownload.album.images[0].url
-                    }
-                    className="rounded-full"
-                    width={20}
-                    height={20}
-                    alt={`${currentDownload.type} cover`}
-                  />
-                </li>
-              </ul>
-              {queue.length > PREVIEW_MAX_IMAGES ? (
-                <span className="text-sm">
-                  +{queue.length - PREVIEW_MAX_IMAGES} more
-                </span>
-              ) : null}
+        {currentDownload ? (
+          <motion.button
+            className="relative flex items-center gap-2 bg-white/10 border border-white/10 text-white backdrop-blur-md p-1.5 rounded-full shadow-2xl"
+            aria-label="Open queue info"
+            onClick={toggleClose}
+            initial={{ y: 500, scale: 0 }}
+            animate={{ y: 0, scale: 1 }}
+            transition={{ duration: 0.4, type: "spring" }}
+          >
+            <ul className="flex items-center -space-x-2">
+              {queue
+                .slice(0, PREVIEW_MAX_IMAGES)
+                .reverse()
+                .map((item, i) => (
+                  <li key={i}>
+                    <Image
+                      src={
+                        item.type === "playlist"
+                          ? item.images[0].url
+                          : item.album.images[0].url
+                      }
+                      className="rounded-full"
+                      width={20}
+                      height={20}
+                      priority={1}
+                      alt={`${currentDownload.type} cover`}
+                    />
+                  </li>
+                ))}
+              <li>
+                <Image
+                  src={
+                    currentDownload.type === "playlist"
+                      ? currentDownload.images[0].url
+                      : currentDownload.album.images[0].url
+                  }
+                  className="rounded-full"
+                  width={20}
+                  height={20}
+                  alt={`${currentDownload.type} cover`}
+                />
+              </li>
+            </ul>
+            {queue.length > PREVIEW_MAX_IMAGES ? (
+              <span className="text-sm">
+                +{queue.length - PREVIEW_MAX_IMAGES} more
+              </span>
+            ) : null}
 
-              <FiChevronUp size={20} />
-              <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-white animate-ping blur-[1px]" />
-            </motion.button>
-          ) : (
-            <motion.span
-              initial={{ y: 500, scale: 0 }}
-              animate={{ y: 0, scale: 1 }}
-              exit={{ y: 500, scale: 0 }}
-              transition={{ duration: 0.4, type: "spring" }}
-            >
-              <Github />
-            </motion.span>
-          )}
-        </AnimatePresence>
+            <FiChevronUp size={20} />
+            <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-white animate-ping blur-[1px]" />
+          </motion.button>
+        ) : (
+          <motion.span
+            initial={{ y: 500, scale: 0 }}
+            animate={{ y: 0, scale: 1 }}
+            transition={{ duration: 0.4, type: "spring" }}
+          >
+            <Github />
+          </motion.span>
+        )}
       </div>
     );
   else
     return (
-      <AnimatePresence>
+      <>
         {currentDownload && (
           <motion.div
             initial={{ y: 500, scale: 0 }}
             animate={{ y: 0, scale: 1 }}
-            exit={{ y: 500, scale: 0 }}
             transition={{ duration: 0.4, type: "spring" }}
             className="w-full bg-white/5 rounded-lg border border-white/20 backdrop-blur-md p-2.5 text-white shadow-lg"
           >
@@ -165,7 +160,7 @@ const Queue = () => {
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </>
     );
 };
 
