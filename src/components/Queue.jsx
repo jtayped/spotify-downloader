@@ -30,7 +30,7 @@ const Queue = () => {
           >
             <ul className="flex items-center -space-x-2">
               {queue
-                .slice(0, PREVIEW_MAX_IMAGES)
+                .slice(0, PREVIEW_MAX_IMAGES - 1)
                 .reverse()
                 .map((item, i) => (
                   <li key={i}>
@@ -62,9 +62,9 @@ const Queue = () => {
                 />
               </li>
             </ul>
-            {queue.length > PREVIEW_MAX_IMAGES ? (
+            {queue.length >= PREVIEW_MAX_IMAGES ? (
               <span className="text-sm">
-                +{queue.length - PREVIEW_MAX_IMAGES} more
+                +{queue.length - PREVIEW_MAX_IMAGES + 1} more
               </span>
             ) : null}
 
