@@ -6,7 +6,7 @@ export const POST = async (request, response) => {
 
   try {
     // Call downloadPlaylist function to generate the zip file
-    const { buffer, filename } = await downloadTrack(track, false);
+    const { buffer, filename } = await downloadTrack(track);
 
     const responseHeaders = new Headers(response.headers);
     responseHeaders.set(
