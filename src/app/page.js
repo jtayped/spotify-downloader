@@ -1,4 +1,3 @@
-import { IoLogoGithub } from "react-icons/io";
 import Search from "@/components/Search";
 import Link from "next/link";
 
@@ -19,13 +18,6 @@ const Home = async () => {
             </Link>
             .
           </p>
-          <Link
-            href="https://github.com/jtayped/spotify-downloader"
-            className="flex items-center gap-2 px-5 py-2 border w-fit rounded-lg mt-2 hover:bg-white/5 transition-colors"
-          >
-            <IoLogoGithub />
-            Repository
-          </Link>
         </div>
         <Search />
       </div>

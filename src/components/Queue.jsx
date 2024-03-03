@@ -5,6 +5,7 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { BsGithub } from "react-icons/bs";
 
 const PREVIEW_MAX_IMAGES = 3;
 const Queue = () => {
@@ -17,11 +18,11 @@ const Queue = () => {
 
   if (closed)
     return (
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center mb-7">
         <AnimatePresence>
-          {currentDownload && (
+          {currentDownload ? (
             <motion.button
-              className="relative flex items-center gap-2 bg-white/10 border border-white/10 text-white backdrop-blur-md p-1.5 rounded-full mb-7 shadow-2xl"
+              className="relative flex items-center gap-2 bg-white/10 border border-white/10 text-white backdrop-blur-md p-1.5 rounded-full shadow-2xl"
               aria-label="Open queue info"
               onClick={toggleClose}
               initial={{ y: 500, scale: 0 }}
@@ -72,6 +73,20 @@ const Queue = () => {
               <FiChevronUp size={20} />
               <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-white animate-ping blur-[1px]" />
             </motion.button>
+          ) : (
+            <motion.span>
+              <Link
+                initial={{ y: 500, scale: 0 }}
+                animate={{ y: 0, scale: 1 }}
+                exit={{ y: 500, scale: 0 }}
+                transition={{ duration: 0.4, type: "spring" }}
+                className="text-white/50 flex items-center gap-3 text-xs border border-white/50 backdrop-blur-md px-2 py-1.5 rounded-full shadow-lg hover:border-white hover:text-white transition-colors"
+                href="https://github.com/jtayped/spotify-downloader"
+              >
+                <BsGithub size={17} />
+                GitHub Repo
+              </Link>
+            </motion.span>
           )}
         </AnimatePresence>
       </div>
