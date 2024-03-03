@@ -4,7 +4,7 @@ import { useDownloader } from "@/context/Download";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Github from "./buttons/Github";
 
 const PREVIEW_MAX_IMAGES = 3;
