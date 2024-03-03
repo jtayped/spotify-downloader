@@ -5,7 +5,7 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { BsGithub } from "react-icons/bs";
+import Github from "./buttons/Github";
 
 const PREVIEW_MAX_IMAGES = 3;
 const Queue = () => {
@@ -74,18 +74,13 @@ const Queue = () => {
               <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-white animate-ping blur-[1px]" />
             </motion.button>
           ) : (
-            <motion.span>
-              <Link
-                initial={{ y: 500, scale: 0 }}
-                animate={{ y: 0, scale: 1 }}
-                exit={{ y: 500, scale: 0 }}
-                transition={{ duration: 0.4, type: "spring" }}
-                className="text-white/50 flex items-center gap-3 text-xs border border-white/50 backdrop-blur-md px-2 py-1.5 rounded-full shadow-lg hover:border-white hover:text-white transition-colors"
-                href="https://github.com/jtayped/spotify-downloader"
-              >
-                <BsGithub size={17} />
-                GitHub Repo
-              </Link>
+            <motion.span
+              initial={{ y: 500, scale: 0 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 500, scale: 0 }}
+              transition={{ duration: 0.4, type: "spring" }}
+            >
+              <Github />
             </motion.span>
           )}
         </AnimatePresence>
