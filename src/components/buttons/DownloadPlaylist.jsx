@@ -3,6 +3,7 @@ import { FiDownload } from "react-icons/fi";
 import Spinner from "../Spinner";
 import { useDownloader } from "@/context/Download";
 import Check from "../Check";
+import { motion } from "framer-motion";
 
 const DownloadPlaylist = ({ playlist }) => {
   const { addDownload, itemState, progress } = useDownloader();
@@ -33,9 +34,11 @@ const DownloadPlaylist = ({ playlist }) => {
   } else if (itemState(playlist) === "downloading")
     return (
       <div className="bg-accent/50 px-5 py-2 rounded w-[150px] relative text-center overflow-hidden">
-        <div
+        <motion.div
           className="absolute left-0 top-0 h-full bg-accent/80 -z-10"
-          style={{ width: `${progress}%` }}
+          initial={{ width: "0%" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.25 }}
         />
         {Math.round(progress)}%
       </div>
