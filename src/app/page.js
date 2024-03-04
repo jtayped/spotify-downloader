@@ -14,7 +14,7 @@ const Home = async () => {
             Easily download spotify <b>playlists or tracks</b> by simply pasting
             the URL in the input dialog. Visit my{" "}
             <Link href="https://joeltaylor.business" className="underline">
-              porfoltio
+              portfoltio
             </Link>
             .
           </p>
