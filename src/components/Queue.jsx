@@ -71,15 +71,7 @@ const Queue = () => {
             <FiChevronUp size={20} />
             <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-white animate-ping blur-[1px]" />
           </motion.button>
-        ) : (
-          <motion.span
-            initial={{ y: 500, scale: 0 }}
-            animate={{ y: 0, scale: 1 }}
-            transition={{ duration: 0.4, type: "spring" }}
-          >
-            <Github />
-          </motion.span>
-        )}
+        ) : null}
       </div>
     );
   else

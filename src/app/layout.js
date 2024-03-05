@@ -5,16 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Spotify Downloader | Joel Taylor",
-  description:
-    "Easily download spotify playlists or tracks. Site made by Joel Taylor.",
-  keywords: [
-    "Spotify",
-    "Spotify Downloader",
-    "Joel Taylor",
-    "Portfolio",
-    "My Work",
-  ],
+  title: "Spotify Downloader",
+  description: "Easily download spotify playlists or tracks.",
+  keywords: ["Spotify", "Spotify Downloader", "Portfolio", "My Work"],
 };
 
 export default function RootLayout({ children }) {
@@ -26,7 +19,7 @@ export default function RootLayout({ children }) {
           <div className="absolute bottom-2/3 left-[100px] w-24 h-24 bg-accent rounded-full blur-[150px] hidden md:block" />
           <div className="absolute top-10 right-24 w-32 h-32 bg-accent rounded-full blur-[150px]" />
         </div>
-        <Providers>{children} </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
