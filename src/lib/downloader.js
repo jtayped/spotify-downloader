@@ -73,12 +73,10 @@ async function downloadYT(id) {
       quality: "highestaudio",
     });
 
-    // Get audio stream
+    // Get audio stream and process it
     const audioStream = ytdl.downloadFromInfo(info, { format: audioFormat });
-
-    // Convert to mp3
-    // const buffer = convertToMp3(audioStream);
     const buffer = streamToBuffer(audioStream);
+
     return buffer;
   } catch (error) {
     console.error(error);
