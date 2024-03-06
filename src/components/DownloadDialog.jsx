@@ -57,7 +57,7 @@ const DownloadDialog = () => {
                 <FaPersonRunning size={50} />
                 <div>
                   <p className="text-sm">Slow download</p>
-                  <p className="text-xs text-white/50">No metadata, .m4a</p>
+                  <p className="text-xs text-white/50">Metadata, .mp3</p>
                 </div>
               </button>
               <button
@@ -67,7 +67,7 @@ const DownloadDialog = () => {
                 <FaPersonWalking size={50} />
                 <div>
                   <p className="text-sm">Fast download</p>
-                  <p className="text-xs text-white/50">Metadata, .mp3</p>
+                  <p className="text-xs text-white/50">No metadata, .m4a</p>
                 </div>
               </button>
             </div>
