@@ -34,8 +34,8 @@ const About = () => {
             Tracks with metadata are converted to MP3 using <i>ffmpeg.wasm</i>{" "}
             and decorated with the data from the Spotify API (title, album,
             cover, artists). At the moment, only individual tracks are served
-            with metadata, and will be fixed in the near future. This is due to
-            the long time hole playlists take to process.
+            with metadata, due to the long time hole playlists take to process,
+            and will be added to playlists in the near future.
           </p>
         </div>
       </main>
