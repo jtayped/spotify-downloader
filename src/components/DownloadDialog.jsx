@@ -51,7 +51,7 @@ const DownloadDialog = () => {
             </p>
             <div className="grid grid-cols-2 gap-4 mt-3">
               <button
-                onClick={() => handleDownload("fast")}
+                onClick={() => handleDownload("slow")}
                 className="bg-white/10 rounded-lg flex flex-col gap-3 items-center justify-center p-4 text-white/70 hover:text-white group transition-colors border border-white/10"
               >
                 <FaPersonRunning size={50} />
@@ -61,7 +61,7 @@ const DownloadDialog = () => {
                 </div>
               </button>
               <button
-                onClick={() => handleDownload("slow")}
+                onClick={() => handleDownload("fast")}
                 className="bg-white/10 rounded-lg flex flex-col gap-3 items-center justify-center p-4 text-xs text-white/70 hover:text-white transition-colors border border-white/10"
               >
                 <FaPersonWalking size={50} />
