@@ -8,7 +8,8 @@ const Home = async () => {
           <h1 className="text-4xl font-bold">Spotify Downloader</h1>
           <p className="mt-2">
             Easily download spotify <b>playlists or tracks</b> by simply pasting
-            the URL in the input dialog.
+            the URL in the input dialog. This page uses YouTube to find the best
+            match download.
           </p>
         </div>
         <Search />
