@@ -20,7 +20,7 @@ export async function downloadTrack(track, silent = true) {
 
     // Create filename
     const filename =
-      pathNamify(`${track.name} by ${track.artists[0].name}`) + ".mp3";
+      pathNamify(`${track.name} by ${track.artists[0].name}`) + ".m4a";
 
     return { buffer, filename };
   } catch (error) {
