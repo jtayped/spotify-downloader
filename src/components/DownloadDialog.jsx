@@ -71,11 +71,19 @@ const DownloadDialog = () => {
                 </div>
               </button>
             </div>
-            <input
-              type="checkbox"
-              onChange={(e) => setRememberSpeed(e.target.value)}
-              value={rememberSpeed}
-            />
+            <div className="mt-4 flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                onChange={(e) => setRememberSpeed(e.target.value)}
+                value={rememberSpeed}
+                htmlFor="rememberChoice"
+                className="relative peer appearance-none h-4 w-4 rounded bg-white/50 checked:bg-white/80"
+              />
+              <div className="absolute w-4 h-4 hidden peer-checked:flex items-center justify-center pointer-events-none">
+                <div className="w-2 h-2 bg-black/80 rounded-sm" />
+              </div>
+              <label id="rememberChoice">Remember my choice</label>
+            </div>
           </motion.main>
         </div>
       ) : null}
