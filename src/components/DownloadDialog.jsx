@@ -6,8 +6,13 @@ import { FaPersonRunning, FaPersonWalking } from "react-icons/fa6";
 import { useState } from "react";
 
 const DownloadDialog = () => {
-  const { dialogItem, closeDialog, addDownload, setDefaultSpeed, defaultSpeed } =
-    useDownloader();
+  const {
+    dialogItem,
+    closeDialog,
+    addDownload,
+    setDefaultSpeed,
+    defaultSpeed,
+  } = useDownloader();
 
   const [rememberSpeed, setRememberSpeed] = useState(false);
 
@@ -51,7 +56,7 @@ const DownloadDialog = () => {
               >
                 <FaPersonRunning size={50} />
                 <div>
-                  <p className="text-sm">Fast download</p>
+                  <p className="text-sm">Slow download</p>
                   <p className="text-xs text-white/50">No metadata, .m4a</p>
                 </div>
               </button>
