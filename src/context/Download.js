@@ -9,6 +9,7 @@ import { fetchFile } from "@ffmpeg/util";
 import { ID3Writer } from "browser-id3-writer";
 import JSZip from "jszip";
 import { v4 as uuidv4 } from "uuid";
+import DownloadDialog from "@/components/DownloadDialog";
 
 const DownloaderContext = createContext();
 export const useDownloader = () => useContext(DownloaderContext);
@@ -27,6 +28,10 @@ export const DownloaderProvider = ({ children }) => {
 
   // Progress
   const [progress, setProgress] = useState(0);
+
+  // Download dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogItem, setDialogItem] = useState(null);
 
   useEffect(() => {
     const download = async () => {
@@ -252,8 +257,27 @@ export const DownloaderProvider = ({ children }) => {
     return null;
   };
 
+  const openDialog = (item) => {
+    setDialogItem(item);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setDialogItem(null);
+  };
+
   // Value object to be passed as context value
-  const value = { addDownload, currentDownload, itemState, queue, progress };
+  const value = {
+    addDownload,
+    currentDownload,
+    itemState,
+    queue,
+    progress,
+    openDialog,
+    closeDialog,
+    dialogItem,
+  };
 
   return (
     <DownloaderContext.Provider value={value}>
@@ -263,6 +287,7 @@ export const DownloaderProvider = ({ children }) => {
       >
         <Queue />
       </div>
+      <DownloadDialog />
       {children}
     </DownloaderContext.Provider>
   );
