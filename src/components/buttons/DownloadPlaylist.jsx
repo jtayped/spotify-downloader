@@ -6,7 +6,16 @@ import Check from "../Check";
 import { motion } from "framer-motion";
 
 const DownloadPlaylist = ({ playlist }) => {
-  const { itemState, progress, openDialog } = useDownloader();
+  const { itemState, progress, openDialog, addDownload, defaultSpeed } =
+    useDownloader();
+
+  const handleClick = () => {
+    if (defaultSpeed) {
+      addDownload(playlist, defaultSpeed);
+    } else {
+      openDialog(playlist);
+    }
+  };
 
   // Check if downloaded
   if (itemState(playlist) === "downloaded") {
@@ -44,7 +53,7 @@ const DownloadPlaylist = ({ playlist }) => {
     return (
       <>
         <button
-          onClick={() => openDialog(playlist)}
+          onClick={handleClick}
           aria-label="Download Playlist"
           className="text-white flex items-center justify-center gap-3 bg-accent hover:bg-accent/90 transition-colors rounded px-5 py-2 w-[150px]"
         >

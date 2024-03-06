@@ -31,6 +31,7 @@ export const DownloaderProvider = ({ children }) => {
 
   // Download dialog
   const [dialogItem, setDialogItem] = useState(null);
+  const [defaultSpeed, setDefaultSpeed] = useState(null);
 
   useEffect(() => {
     const download = async () => {
@@ -149,6 +150,8 @@ export const DownloaderProvider = ({ children }) => {
       });
       let buffer = response.data;
 
+      let filename = getFilenameFromHeaders(response.headers);
+
       // If mode == slow it should conver to mp3 and add metadata
       if (track.speed === "slow") {
         // Convert to mp3
@@ -156,10 +159,12 @@ export const DownloaderProvider = ({ children }) => {
         if (!buffer) return; // If any errors occur just return null
 
         buffer = await addMetadata(buffer, track);
+
+        // Change file extension
+        filename = filename.slice(0, -4) + ".mp3";
       }
 
       // Download blob with appropriate filename from headers
-      const filename = getFilenameFromHeaders(response.headers);
       return { buffer, filename };
     } catch (error) {
       console.error(error);
@@ -180,14 +185,14 @@ export const DownloaderProvider = ({ children }) => {
 
       // Write the file
       const id = uuidv4();
-      await ffmpeg.writeFile(`${id}.mp4`, await fetchFile(trackBuffer));
+      await ffmpeg.writeFile(`${id}.m4a`, await fetchFile(trackBuffer));
 
       // Execute FFmpeg command to convert mp4 to mp3
-      await ffmpeg.exec(["-i", `${id}.mp4`, `${id}.mp3`]);
+      await ffmpeg.exec(["-i", `${id}.m4a`, `${id}.mp3`]);
       const data = await ffmpeg.readFile(`${id}.mp3`);
 
       // Delete files
-      await ffmpeg.deleteFile(`${id}.mp4`);
+      await ffmpeg.deleteFile(`${id}.m4a`);
       await ffmpeg.deleteFile(`${id}.mp3`);
 
       return data.buffer;
@@ -274,6 +279,8 @@ export const DownloaderProvider = ({ children }) => {
     openDialog,
     closeDialog,
     dialogItem,
+    setDefaultSpeed,
+    defaultSpeed,
   };
 
   return (
