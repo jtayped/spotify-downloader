@@ -3,18 +3,26 @@ import { useDownloader } from "@/context/Download";
 import { MdOutlineClose } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPersonRunning, FaPersonWalking } from "react-icons/fa6";
+import { useState } from "react";
 
 const DownloadDialog = () => {
-  const { dialogItem, closeDialog, addDownload } = useDownloader();
+  const { dialogItem, closeDialog, addDownload, setDefaultSpeed, defaultSpeed } =
+    useDownloader();
+
+  const [rememberSpeed, setRememberSpeed] = useState(false);
 
   const handleDownload = (speed) => {
     addDownload(dialogItem, speed);
     closeDialog();
+
+    if (rememberSpeed) {
+      setDefaultSpeed(speed);
+    }
   };
 
   return (
     <AnimatePresence>
-      {dialogItem ? (
+      {dialogItem && !defaultSpeed ? (
         <div className="fixed w-full h-screen flex items-center justify-center z-50 px-7">
           <motion.div
             initial={{ opacity: 0 }}
@@ -58,6 +66,11 @@ const DownloadDialog = () => {
                 </div>
               </button>
             </div>
+            <input
+              type="checkbox"
+              onChange={(e) => setRememberSpeed(e.target.value)}
+              value={rememberSpeed}
+            />
           </motion.main>
         </div>
       ) : null}

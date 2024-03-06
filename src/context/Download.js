@@ -31,6 +31,7 @@ export const DownloaderProvider = ({ children }) => {
 
   // Download dialog
   const [dialogItem, setDialogItem] = useState(null);
+  const [defaultSpeed, setDefaultSpeed] = useState(null);
 
   useEffect(() => {
     const download = async () => {
@@ -278,6 +279,8 @@ export const DownloaderProvider = ({ children }) => {
     openDialog,
     closeDialog,
     dialogItem,
+    setDefaultSpeed,
+    defaultSpeed,
   };
 
   return (
