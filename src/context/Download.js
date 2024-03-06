@@ -30,7 +30,6 @@ export const DownloaderProvider = ({ children }) => {
   const [progress, setProgress] = useState(0);
 
   // Download dialog
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogItem, setDialogItem] = useState(null);
 
   useEffect(() => {
@@ -259,11 +258,9 @@ export const DownloaderProvider = ({ children }) => {
 
   const openDialog = (item) => {
     setDialogItem(item);
-    setDialogOpen(true);
   };
 
   const closeDialog = () => {
-    setDialogOpen(false);
     setDialogItem(null);
   };
 
