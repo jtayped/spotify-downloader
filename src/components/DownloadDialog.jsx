@@ -46,8 +46,8 @@ const DownloadDialog = () => {
             <button className="absolute top-3 right-3" onClick={closeDialog}>
               <MdOutlineClose size={23} />
             </button>
-            <p className="text-xl font-semibold">
-              Donwload <b>{dialogItem.name}</b>
+            <p className="text-xl font-semibold whitespace-nowrap max-w-[230px] md:max-w-[300px] overflow-hidden truncate">
+              {dialogItem.name}
             </p>
             <div className="grid grid-cols-2 gap-4 mt-3">
               <button
