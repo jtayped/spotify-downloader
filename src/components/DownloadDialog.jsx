@@ -54,20 +54,20 @@ const DownloadDialog = () => {
                 onClick={() => handleDownload("slow")}
                 className="bg-white/10 rounded-lg flex flex-col gap-3 items-center justify-center p-4 text-white/70 hover:text-white group transition-colors border border-white/10"
               >
-                <FaPersonRunning size={50} />
+                <FaPersonWalking size={50} />
                 <div>
                   <p className="text-sm">Slow download</p>
-                  <p className="text-xs text-white/50">No metadata, .m4a</p>
+                  <p className="text-xs text-white/50">Metadata, .mp3</p>
                 </div>
               </button>
               <button
                 onClick={() => handleDownload("fast")}
                 className="bg-white/10 rounded-lg flex flex-col gap-3 items-center justify-center p-4 text-xs text-white/70 hover:text-white transition-colors border border-white/10"
               >
-                <FaPersonWalking size={50} />
+                <FaPersonRunning size={50} />
                 <div>
                   <p className="text-sm">Fast download</p>
-                  <p className="text-xs text-white/50">Metadata, .mp3</p>
+                  <p className="text-xs text-white/50">No metadata, .m4a</p>
                 </div>
               </button>
             </div>
