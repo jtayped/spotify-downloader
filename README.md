@@ -13,7 +13,7 @@
     <a href="https://github.com/jtayped/spotify-downloader"><strong>Explore the docs »</strong></a>
     <br/>
     <br/>
-    <a href="https://spotify.joeltaylor.business/">View Demo</a>
+    <a href="https://spotifydownload.net/">View Demo</a>
     .
     <a href="https://github.com/jtayped/spotify-downloader/issues">Report Bug</a>
     .
