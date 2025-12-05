@@ -55,15 +55,15 @@ func main() {
 	e.Use(middleware.CORS())
 
 	// Standard Routes
-	e.GET("/playlist/:id", h.GetPlaylist)
-	e.GET("/track/:id", h.GetTrackDetails)
-	e.GET("/track/:id/video", h.GetTrackVideo)
-	e.GET("/track/:id/download", h.DownloadTrackAudio) // Direct stream (single track)
+	e.GET("/api/playlist/:id", h.GetPlaylist)
+	e.GET("/api/track/:id", h.GetTrackDetails)
+	e.GET("/api/track/:id/video", h.GetTrackVideo)
+	e.GET("/api/track/:id/download", h.DownloadTrackAudio) // Direct stream (single track)
 
 	// Async/Queue Routes
-	e.POST("/playlist/:id/download", h.StartPlaylistDownload) // Start Job
-	e.GET("/ws", h.HandleWebSocket)                           // Listen for progress
-	e.GET("/download/:jobId", h.ServeDownloadFile)            // Download result
+	e.POST("/api/playlist/:id/download", h.StartPlaylistDownload) // Start Job
+	e.GET("/api/ws", h.HandleWebSocket)                           // Listen for progress
+	e.GET("/api/download/:jobId", h.ServeDownloadFile)            // Download result
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

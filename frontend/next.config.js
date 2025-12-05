@@ -11,7 +11,7 @@ const config = {output: 'standalone', async rewrites() {
         source: '/api/:path*',
         // In dev, forward to where your Go backend is running locally.
         // If Go is in Docker mapped to port 8080, use localhost:8080
-        destination: 'http://localhost:1323/api/:path*', 
+        destination: 'http://localhost:1323/:path*', 
       },
     ];
   },};
