@@ -1,0 +1,13 @@
+# .dockerignore (Root level)
+.git
+.env
+**/.DS_Store
+
+# Node
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/build
+
+# Go
+backend/storage

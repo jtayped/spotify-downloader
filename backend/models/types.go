@@ -1,19 +1,36 @@
 package models
 
+// --- Custom Enum Types ---
+
+type JobType string
+
+const (
+	JobTypePlaylist JobType = "playlist"
+	JobTypeTrack    JobType = "track"
+)
+
+type ProgressType string
+
+const (
+	ProgressTypeProgress ProgressType = "progress"
+	ProgressTypeComplete ProgressType = "complete"
+	ProgressTypeError    ProgressType = "error"
+)
+
 // --- Queue & WebSocket Models ---
 
 type Job struct {
-	ID         string `json:"id"`
-	PlaylistID string `json:"playlist_id"`
-	Type       string `json:"type"` // "playlist" or "track"
+	ID         string  `json:"id"`
+	PlaylistID string  `json:"playlistId"`
+	Type       JobType `json:"type" tstype:"'playlist' | 'track'"`
 }
 
 type ProgressMessage struct {
-	Type     string `json:"type"`     // "progress", "complete", "error"
-	JobID    string `json:"job_id"`
-	Progress float64 `json:"progress"` // 0-100
-	Message  string `json:"message"`
-	Payload  any    `json:"payload,omitempty"`
+	Type     ProgressType `json:"type" tstype:"'progress' | 'complete' | 'error'"`
+	JobID    string       `json:"jobId"`
+	Progress float64      `json:"progress"` // 0-100
+	Message  string       `json:"message"`
+	Payload  any          `json:"payload,omitempty" tstype:"unknown"`
 }
 
 // --- Spotify Models ---
@@ -28,8 +45,8 @@ type PlaylistMetadata struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Owner       string `json:"owner"`
-	ImageURL    string `json:"image_url"`
-	ExternalURL string `json:"external_url"`
+	ImageURL    string `json:"imageUrl"`
+	ExternalURL string `json:"externalUrl"`
 }
 
 type TrackDTO struct {
@@ -37,11 +54,11 @@ type TrackDTO struct {
 	Name        string      `json:"name"`
 	Artists     []ArtistDTO `json:"artists"`
 	Album       AlbumDTO    `json:"album"`
-	DurationMs  int         `json:"duration_ms"`
+	DurationMs  int         `json:"durationMs"`
 	Explicit    bool        `json:"explicit"`
-	PreviewURL  string      `json:"preview_url"`
-	ExternalURL string      `json:"external_url"`
-	AddedAt     string      `json:"added_at"`
+	PreviewURL  string      `json:"previewUrl"`
+	ExternalURL string      `json:"externalUrl"`
+	AddedAt     string      `json:"addedAt"`
 }
 
 type TrackDetailsDTO struct {
@@ -49,13 +66,13 @@ type TrackDetailsDTO struct {
 	Name        string      `json:"name"`
 	Artists     []ArtistDTO `json:"artists"`
 	Album       AlbumDTO    `json:"album"`
-	DurationMs  int         `json:"duration_ms"`
+	DurationMs  int         `json:"durationMs"`
 	Explicit    bool        `json:"explicit"`
-	PreviewURL  string      `json:"preview_url"`
-	ExternalURL string      `json:"external_url"`
+	PreviewURL  string      `json:"previewUrl"`
+	ExternalURL string      `json:"externalUrl"`
 	Popularity  int         `json:"popularity"`
-	TrackNumber int         `json:"track_number"`
-	DiscNumber  int         `json:"disc_number"`
+	TrackNumber int         `json:"trackNumber"`
+	DiscNumber  int         `json:"discNumber"`
 	ISRC        string      `json:"isrc"`
 }
 
@@ -66,8 +83,8 @@ type ArtistDTO struct {
 
 type AlbumDTO struct {
 	Name        string `json:"name"`
-	ImageURL    string `json:"image_url"`
-	ReleaseDate string `json:"release_date"`
+	ImageURL    string `json:"imageUrl"`
+	ReleaseDate string `json:"releaseDate"`
 }
 
 // --- YouTube Models ---
@@ -78,5 +95,5 @@ type YtDlpResult struct {
 	ID       string  `json:"id"`
 	Title    string  `json:"title"`
 	Duration float64 `json:"duration"`
-	Webpage  string  `json:"webpage_url"`
+	Webpage  string  `json:"webpageUrl"`
 }

@@ -1,26 +1,30 @@
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     container_name: nextjs_frontend
     restart: always
     env_file:
-      - .env 
+      - .env
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: go_backend
     restart: always
     env_file:
-      - .env 
+      - .env
     volumes:
-      - ./backend/storage:/root/storage # Persist storage if needed
+      - ./backend/storage:/root/storage
 
   nginx:
     image: nginx:alpine
     container_name: nginx_proxy
     restart: always
     ports:
-      - "80:80" # Opens port 80 on your computer
+      - "80:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/nginx.conf:ro
     depends_on:

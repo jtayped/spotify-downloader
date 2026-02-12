@@ -12,6 +12,7 @@
 
     /* Strictness */
     "strict": true,
+    "strictPropertyInitialization": false,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 
