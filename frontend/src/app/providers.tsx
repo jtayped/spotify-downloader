@@ -1,11 +1,13 @@
-'use client'
+"use client";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
-} from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "next-themes";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -16,19 +18,19 @@ function makeQueryClient() {
         staleTime: 60 * 1000,
       },
     },
-  })
+  });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined
+let browserQueryClient: QueryClient | undefined = undefined;
 
 function getQueryClient() {
   if (isServer) {
     // Server: always make a new query client
-    return makeQueryClient()
+    return makeQueryClient();
   } else {
     // Browser: make a new query client if we don't already have one
     browserQueryClient ??= makeQueryClient();
-    return browserQueryClient
+    return browserQueryClient;
   }
 }
 
@@ -37,12 +39,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
   //       render if it suspends and there is no boundary
-  const queryClient = getQueryClient()
+  const queryClient = getQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <TooltipProvider>{children}</TooltipProvider>
+      </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  )
+  );
 }
