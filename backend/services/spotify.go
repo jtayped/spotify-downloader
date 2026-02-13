@@ -50,6 +50,7 @@ func (s *SpotifyService) GetPlaylist(ctx context.Context, playlistID string, off
 		}
 		
 		response.Metadata = &models.PlaylistMetadata{
+			Id:			 string(full.ID),
 			Name:        full.Name,
 			Description: full.Description,
 			Owner:       full.Owner.DisplayName,

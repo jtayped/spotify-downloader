@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import DownloadButton from "./download-button";
 
 interface PlaylistHeaderProps {
   metadata?: PlaylistMetadata;
@@ -58,10 +59,7 @@ export const PlaylistHeader = ({
 
         {/* Action Buttons */}
         <div className="mt-4 flex justify-center gap-2 md:justify-start">
-          <Button size="lg">
-            <Download />
-            download
-          </Button>
+          <DownloadButton playlistId={metadata.id} />
           <Button variant="outline" size="icon-lg" asChild>
             <Link href={metadata.externalUrl} target="_blank" rel="noreferrer">
               <ExternalLink />

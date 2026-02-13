@@ -7,43 +7,13 @@ import (
 	"backend/internal/queue"
 	"backend/internal/ws"
 	"backend/services"
-	"backend/models"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 )
 
 func main() {
-	converter := typescriptify.New()
-	converter.CreateFromMethod = false
-	converter.BackupDir = ""
-	converter.CreateConstructor = false
-
-	// Get all exported structs from models package
-	structs := []interface{}{
-		models.Job{},
-		models.ProgressMessage{},
-		models.PlaylistResponse{},
-		models.PlaylistMetadata{},
-		models.TrackDTO{},
-		models.TrackDetailsDTO{},
-		models.ArtistDTO{},
-		models.AlbumDTO{},
-		models.YtDlpResult{},
-	}
-
-	// Add all structs to converter
-	for _, s := range structs {
-		converter.Add(s)
-	}
-
-	err := converter.ConvertToFile("../frontend/src/types/index.ts")
-	if err != nil {
-		log.Fatalf("Error generating types: %v", err)
-	}
-
 	if err := godotenv.Load("../.env"); err != nil {
 		log.Println("Info: No .env file found, relying on system environment variables")
 	}

@@ -5,8 +5,8 @@ import (
 	"backend/internal/ws"
 	"backend/models"
 	"backend/services"
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -30,20 +30,21 @@ var upgrader = websocket.Upgrader{
 // StartPlaylistDownload (POST /playlist/:id/download)
 // Adds a job to the queue and returns the Job ID for WebSocket connection
 func (h *Handler) StartPlaylistDownload(c echo.Context) error {
-	id := c.Param("id")
-	jobID := uuid.New().String()
+    id := c.Param("id")
+    jobID := uuid.New().String()
 
-	// Add to queue
-	h.Queue.AddJob(models.Job{
-		ID:         jobID,
-		PlaylistID: id,
-		Type:       "playlist",
-	})
+    // Add to queue
+    h.Queue.AddJob(models.Job{
+        ID:         jobID,
+        PlaylistID: id,
+        Type:       "playlist", // or models.JobTypePlaylist
+    })
 
-	return c.JSON(http.StatusAccepted, map[string]string{
-		"job_id": jobID,
-		"ws_url": "/ws?job_id=" + jobID, // Frontend can prepend host
-	})
+    // Return the typed response
+    return c.JSON(http.StatusAccepted, models.DownloadJobResponse{
+        JobID: jobID,
+        WsURL: "/api/ws?job_id=" + jobID,
+    })
 }
 
 // HandleWebSocket (GET /ws)

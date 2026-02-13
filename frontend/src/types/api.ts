@@ -22,12 +22,17 @@ export interface ProgressMessage {
   message: string;
   payload?: unknown;
 }
+export interface DownloadJobResponse {
+  job_id: string;
+  ws_url: string;
+}
 export interface PlaylistResponse {
   metadata?: PlaylistMetadata;
   tracks: TrackDTO[];
   total: number /* int */;
 }
 export interface PlaylistMetadata {
+  id: string;
   name: string;
   description: string;
   owner: string;

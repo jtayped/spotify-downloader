@@ -33,6 +33,11 @@ type ProgressMessage struct {
 	Payload  any          `json:"payload,omitempty" tstype:"unknown"`
 }
 
+type DownloadJobResponse struct {
+    JobID string `json:"job_id"`
+    WsURL string `json:"ws_url"`
+}
+
 // --- Spotify Models ---
 
 type PlaylistResponse struct {
@@ -42,6 +47,7 @@ type PlaylistResponse struct {
 }
 
 type PlaylistMetadata struct {
+	Id			string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Owner       string `json:"owner"`
