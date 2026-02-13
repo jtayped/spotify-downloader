@@ -8,15 +8,8 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Check,
-  SearchIcon,
-  Cancel01Icon,
-  ClipboardIcon,
-  Delete02Icon,
-} from "@hugeicons/core-free-icons";
 import { Button } from "../ui/button";
+import { Search, ClipboardPaste, Trash2, Check, X } from "lucide-react";
 
 const UrlInput = () => {
   const [inputValue, setInputValue] = useState("");
@@ -97,7 +90,7 @@ const UrlInput = () => {
 
         {/* Start Addon: Search Icon */}
         <InputGroupAddon align="inline-start">
-          <HugeiconsIcon icon={SearchIcon} className="text-gray-400" />
+          <Search />
         </InputGroupAddon>
 
         {/* End Addon: Action Buttons & Validation */}
@@ -109,7 +102,7 @@ const UrlInput = () => {
               aria-label="Paste from clipboard"
               title="Paste from clipboard"
             >
-              <HugeiconsIcon icon={ClipboardIcon} size={18} />
+              <ClipboardPaste />
             </InputGroupButton>
           ) : (
             <InputGroupButton
@@ -118,16 +111,12 @@ const UrlInput = () => {
               aria-label="Clear input"
               title="Clear input"
             >
-              <HugeiconsIcon icon={Delete02Icon} />
+              <Trash2 />
             </InputGroupButton>
           )}
 
-          {status === "valid" && (
-            <HugeiconsIcon icon={Check} className="text-green-500" />
-          )}
-          {status === "invalid" && (
-            <HugeiconsIcon icon={Cancel01Icon} className="text-red-500" />
-          )}
+          {status === "valid" && <Check />}
+          {status === "invalid" && <X />}
         </InputGroupAddon>
       </InputGroup>
 

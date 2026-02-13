@@ -1,12 +1,13 @@
 "use server";
+import PlaylistView from "@/components/playlist";
 import { api } from "@/lib/api";
 import { catchError } from "@/lib/error-handling";
-import type { PlaylistMetadata } from "@/types/api";
+import type { PlaylistResponse } from "@/types/api";
 import { notFound } from "next/navigation";
 import React from "react";
 
 async function fetchPlaylist(id: string) {
-  const response = await api.get<PlaylistMetadata>(`/api/playlist/${id}`);
+  const response = await api.get<PlaylistResponse>(`/api/playlist/${id}`);
   return response.data;
 }
 
@@ -20,7 +21,7 @@ const PlaylistPage = async ({
   const [error, playlist] = await catchError(fetchPlaylist(id));
   if (error) return notFound();
 
-  return <div>{JSON.stringify(playlist)}</div>;
+  return <PlaylistView playlist={playlist} />;
 };
 
 export default PlaylistPage;

@@ -15,6 +15,12 @@ const config = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      new URL("https://image-cdn-ak.spotifycdn.com/image/**"),
+      new URL("https://i.scdn.co/image/**"),
+    ],
+  },
 };
 
 export default config;

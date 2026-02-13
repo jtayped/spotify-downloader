@@ -1,3 +1,4 @@
+import TrackView from "@/components/track";
 import { api } from "@/lib/api";
 import { catchError } from "@/lib/error-handling";
 import type { TrackDetailsDTO } from "@/types/api";
@@ -15,7 +16,7 @@ const TrackPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, track] = await catchError(fetchTrack(id));
   if (error) return notFound();
 
-  return <div>{JSON.stringify(track)}</div>;
+  return <TrackView track={track} />;
 };
 
 export default TrackPage;
