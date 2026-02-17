@@ -13,6 +13,7 @@ import (
 	"math"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -43,13 +44,17 @@ func parseProgress(line string) float64 {
 
 // DownloadWithProgress runs yt-dlp and writes progress to a callback channel
 func (s *YouTubeService) DownloadWithProgress(ctx context.Context, videoID string, progressCallback func(float64)) (string, error) {
-    // 1. Setup Command (Download to a specific temp file path, not stdout pipe this time)
-    outputPath := fmt.Sprintf("./tmp/%s.mp3", videoID) // Simplified path logic
+	// Get the current working directory (should be /backend)
+    cwd, _ := os.Getwd()
+    cookiesPath := filepath.Join(cwd, "cookies.txt")
     
+    outputPath := fmt.Sprintf("./tmp/%s.mp3", videoID)
+
     cmd := exec.CommandContext(ctx, s.binPath,
         "-x", "--audio-format", "mp3",
+        "--cookies", cookiesPath, // Use the absolute path
         "-o", outputPath,
-        "--newline", // IMPORTANT: output progress on new lines
+        "--newline",
         videoID,
     )
 
@@ -254,42 +259,65 @@ func (s *YouTubeService) StreamPlaylistToZipParallel(ctx context.Context, w io.W
 	return nil
 }
 
-// DownloadToFile runs yt-dlp and saves the file to a specific path, reporting progress
+// DownloadToFile runs yt-dlp and saves the file to a specific path
 func (s *YouTubeService) DownloadToFile(ctx context.Context, videoID, targetPath string, progressCallback func(float64)) error {
-	// Construct command
-	cmd := exec.CommandContext(ctx, s.binPath,
-		"-x", "--audio-format", "mp3",
-		"-o", targetPath, // Tell yt-dlp exactly where to save it
-		"--newline",      // Necessary for parsing progress
-		"--force-overwrites",
-		videoID,
-	)
+	cwd, _ := os.Getwd()
+    cookiesPath := filepath.Join(cwd, "cookies.txt")
 
-	// Capture stdout to read progress
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
+    // Verify file exists
+    if _, err := os.Stat(cookiesPath); os.IsNotExist(err) {
+        return fmt.Errorf("cookies.txt missing at: %s", cookiesPath)
+    }
 
-	// Start
-	if err := cmd.Start(); err != nil {
-		return err
-	}
+    cmd := exec.CommandContext(ctx, s.binPath,
+        "-x", "--audio-format", "mp3",
+        "--cookies", cookiesPath,
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36", // <--- ADD THIS
+        "-o", targetPath,
+        "--newline",
+        "https://www.youtube.com/watch?v="+videoID,
+    )
 
-	// Parse progress line by line
-	scanner := bufio.NewScanner(stdout)
-	for scanner.Scan() {
-		line := scanner.Text()
-		// Only trigger callback if we find a progress update
-		if strings.Contains(line, "[download]") && strings.Contains(line, "%") {
-			pct := parseProgress(line)
-			if pct > 0 {
-				progressCallback(pct)
-			}
-		}
-	}
+    // 2. Create pipes for BOTH Stdout and Stderr
+    stdout, err := cmd.StdoutPipe()
+    if err != nil {
+        return fmt.Errorf("failed to get stdout: %w", err)
+    }
+    
+    stderr, err := cmd.StderrPipe()
+    if err != nil {
+        return fmt.Errorf("failed to get stderr: %w", err)
+    }
 
-	return cmd.Wait()
+    // 3. Start the process
+    if err := cmd.Start(); err != nil {
+        return fmt.Errorf("failed to start yt-dlp: %w", err)
+    }
+
+    // 4. Capture Stderr in a separate goroutine
+    var stderrBuf bytes.Buffer
+    go func() {
+        io.Copy(&stderrBuf, stderr)
+    }()
+
+    // 5. Parse progress from Stdout (Main thread)
+    scanner := bufio.NewScanner(stdout)
+    for scanner.Scan() {
+        line := scanner.Text()
+        if strings.Contains(line, "[download]") && strings.Contains(line, "%") {
+            pct := parseProgress(line)
+            if pct > 0 {
+                progressCallback(pct)
+            }
+        }
+    }
+
+    // 6. Wait for finish and check error
+    if err := cmd.Wait(); err != nil {
+        return fmt.Errorf("yt-dlp failed: %v | Stderr: %s", err, stderrBuf.String())
+    }
+
+    return nil
 }
 
 // Helper to write logs thread-safely
