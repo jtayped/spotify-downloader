@@ -2,8 +2,7 @@
 
 import { Download, Loader2, CheckCircle, XCircle } from "lucide-react";
 import React from "react";
-import { Button } from "@/components/ui/button"; // Assuming shadcn
-import { Progress } from "@/components/ui/progress"; // Assuming shadcn
+import { Button } from "@/components/ui/button";
 import { usePlaylistDownload } from "@/hooks/use-playlist-download";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +33,7 @@ const DownloadButton = ({ playlistId }: DownloadButtonProps) => {
   }
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-2">
+    <div className="grid w-full max-w-xs gap-2">
       <Button
         size="lg"
         onClick={startDownload}
@@ -72,15 +71,10 @@ const DownloadButton = ({ playlistId }: DownloadButtonProps) => {
 
       {/* Status Message & Progress Bar Area */}
       {status !== "idle" && (
-        <div className="animate-in fade-in slide-in-from-top-1 space-y-1">
-          <div className="text-muted-foreground flex justify-between text-xs">
-            <span>{message}</span>
-            {status === "processing" && <span>{Math.round(progress)}%</span>}
-          </div>
-
-          {status === "processing" && (
-            <Progress value={progress} className="h-2" />
-          )}
+        <div className="animate-in fade-in slide-in-from-top-1 w-fit">
+          <p className="text-muted-foreground max-w-xs truncate text-left text-xs whitespace-nowrap">
+            {message}
+          </p>
         </div>
       )}
     </div>
