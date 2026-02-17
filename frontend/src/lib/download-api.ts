@@ -12,7 +12,7 @@ export async function initiateDownload(
 
 export async function triggerFileDownload(jobId: string, filename: string) {
   try {
-    const response = await api.get(`/download/${jobId}`, {
+    const response = await api.get(`/api/download/${jobId}`, {
       responseType: "blob",
     });
 
