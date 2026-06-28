@@ -6,14 +6,15 @@
 export type JobType = string;
 export const JobTypePlaylist: JobType = "playlist";
 export const JobTypeTrack: JobType = "track";
+export const JobTypeAlbum: JobType = "album";
 export type ProgressType = string;
 export const ProgressTypeProgress: ProgressType = "progress";
 export const ProgressTypeComplete: ProgressType = "complete";
 export const ProgressTypeError: ProgressType = "error";
 export interface Job {
   id: string;
-  playlistId: string;
-  type: 'playlist' | 'track';
+  itemId: string;
+  type: 'playlist' | 'track' | 'album';
 }
 export interface ProgressMessage {
   type: 'progress' | 'complete' | 'error';
@@ -49,6 +50,8 @@ export interface TrackDTO {
   previewUrl: string;
   externalUrl: string;
   addedAt: string;
+  trackNumber: number /* int */;
+  discNumber: number /* int */;
 }
 export interface TrackDetailsDTO {
   id: string;
@@ -72,6 +75,20 @@ export interface AlbumDTO {
   name: string;
   imageUrl: string;
   releaseDate: string;
+}
+export interface AlbumMetadata {
+  id: string;
+  name: string;
+  artists: ArtistDTO[];
+  imageUrl: string;
+  releaseDate: string;
+  totalTracks: number /* int */;
+  externalUrl: string;
+}
+export interface AlbumResponse {
+  metadata?: AlbumMetadata;
+  tracks: TrackDTO[];
+  total: number /* int */;
 }
 /**
  * YtDlpResult represents the JSON output from yt-dlp

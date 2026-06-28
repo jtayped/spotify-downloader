@@ -7,128 +7,101 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"strings"
+
+	id3 "github.com/bogem/id3v2/v2"
 )
 
-// WriteMP3Metadata uses ffmpeg to embed Spotify track metadata as ID3v2.3 tags.
-// ID3v2.3 is used for maximum compatibility (Windows Media Player, VLC, etc).
-// The original file is replaced in-place with the tagged version.
+// WriteMP3Metadata embeds Spotify track metadata as ID3v2.3 tags directly in Go
+// using bogem/id3v2. This avoids shelling out to ffmpeg and handles the APIC
+// (attached picture) frame correctly for VLC / Windows Media Player compatibility.
 func WriteMP3Metadata(filePath string, track models.TrackDTO) error {
-	absPath, err := filepath.Abs(filePath)
+	if _, err := os.Stat(filePath); err != nil {
+		return fmt.Errorf("source file not found at %q: %w", filePath, err)
+	}
+
+	tag, err := id3.Open(filePath, id3.Options{Parse: false})
 	if err != nil {
-		return fmt.Errorf("abs path: %w", err)
+		return fmt.Errorf("open mp3 for tagging: %w", err)
 	}
+	defer tag.Close()
 
-	if _, err := os.Stat(absPath); err != nil {
-		return fmt.Errorf("source file not found at %q: %w", absPath, err)
-	}
-
-	taggedPath := absPath + ".tagged.mp3"
-
-	coverPath := ""
-	if track.Album.ImageURL != "" {
-		p, err := downloadCoverArt(track.Album.ImageURL)
-		if err != nil {
-			log.Printf("[metadata] cover art fetch for %q: %v", track.Name, err)
-		} else {
-			coverPath = p
-			defer os.Remove(coverPath)
-		}
-	}
+	tag.SetVersion(3) // ID3v2.3 — widest player support
 
 	artistNames := make([]string, len(track.Artists))
 	for i, a := range track.Artists {
 		artistNames[i] = a.Name
 	}
 
-	args := []string{"-y", "-loglevel", "warning", "-i", absPath}
+	tag.SetTitle(track.Name)
+	tag.SetArtist(strings.Join(artistNames, ", "))
+	tag.SetAlbum(track.Album.Name)
 
-	if coverPath != "" {
-		args = append(args, "-i", coverPath)
-		args = append(args, "-map", "0:a", "-map", "1:v")
-		args = append(args, "-c:v", "copy")
-	} else {
-		args = append(args, "-map", "0:a")
-	}
-
-	args = append(args,
-		"-c:a", "copy",
-		"-map_metadata", "-1",
-		"-id3v2_version", "3",
-		"-write_id3v1", "1",
-		"-metadata", "title="+track.Name,
-		"-metadata", "artist="+strings.Join(artistNames, ", "),
-		"-metadata", "album="+track.Album.Name,
-	)
-
-	if len(artistNames) > 0 {
-		args = append(args, "-metadata", "album_artist="+artistNames[0])
-	}
 	if year := extractYear(track.Album.ReleaseDate); year != "" {
-		args = append(args, "-metadata", "date="+year)
+		tag.SetYear(year)
+	}
+	if len(artistNames) > 0 {
+		tag.AddTextFrame("TPE2", id3.EncodingUTF8, artistNames[0])
 	}
 	if track.TrackNumber > 0 {
-		args = append(args, "-metadata", fmt.Sprintf("track=%d", track.TrackNumber))
+		tag.AddTextFrame("TRCK", id3.EncodingUTF8, fmt.Sprintf("%d", track.TrackNumber))
 	}
 	if track.DiscNumber > 0 {
-		args = append(args, "-metadata", fmt.Sprintf("disc=%d", track.DiscNumber))
+		tag.AddTextFrame("TPOS", id3.EncodingUTF8, fmt.Sprintf("%d", track.DiscNumber))
 	}
 	if track.ExternalURL != "" {
-		args = append(args, "-metadata", "comment="+track.ExternalURL)
+		tag.AddCommentFrame(id3.CommentFrame{
+			Encoding:    id3.EncodingUTF8,
+			Language:    "eng",
+			Description: "",
+			Text:        track.ExternalURL,
+		})
 	}
 
-	args = append(args, taggedPath)
-
-	log.Printf("[metadata] tagging %q", filepath.Base(absPath))
-	cmd := exec.Command("ffmpeg", args...)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		os.Remove(taggedPath)
-		return fmt.Errorf("ffmpeg failed: %v\nffmpeg output:\n%s", err, string(out))
-	}
-	if len(out) > 0 {
-		log.Printf("[metadata] ffmpeg: %s", strings.TrimSpace(string(out)))
-	}
-
-	if err := os.Rename(taggedPath, absPath); err != nil {
-		os.Remove(taggedPath)
-		return fmt.Errorf("rename tagged file: %w", err)
+	if track.Album.ImageURL != "" {
+		data, mime, err := fetchCoverArt(track.Album.ImageURL)
+		if err != nil {
+			log.Printf("[metadata] cover art for %q: %v", track.Name, err)
+		} else {
+			tag.AddAttachedPicture(id3.PictureFrame{
+				Encoding:    id3.EncodingUTF8,
+				MimeType:    mime,
+				PictureType: id3.PTFrontCover,
+				Description: "Cover",
+				Picture:     data,
+			})
+		}
 	}
 
-	log.Printf("[metadata] done: %q", filepath.Base(absPath))
+	if err := tag.Save(); err != nil {
+		return fmt.Errorf("save id3 tags: %w", err)
+	}
+
+	log.Printf("[metadata] done: %q", track.Name)
 	return nil
 }
 
-func downloadCoverArt(url string) (string, error) {
+func fetchCoverArt(url string) ([]byte, string, error) {
 	resp, err := http.Get(url) //nolint:noctx
 	if err != nil {
-		return "", fmt.Errorf("fetch: %w", err)
+		return nil, "", fmt.Errorf("fetch: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("fetch: HTTP %d", resp.StatusCode)
+		return nil, "", fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 
-	ext := ".jpg"
+	mime := "image/jpeg"
 	if strings.Contains(resp.Header.Get("Content-Type"), "png") {
-		ext = ".png"
+		mime = "image/png"
 	}
 
-	tmp, err := os.CreateTemp("", "cover_*"+ext)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("create temp file: %w", err)
+		return nil, "", fmt.Errorf("read body: %w", err)
 	}
-	defer tmp.Close()
-
-	if _, err := io.Copy(tmp, resp.Body); err != nil {
-		os.Remove(tmp.Name())
-		return "", fmt.Errorf("write temp file: %w", err)
-	}
-
-	return tmp.Name(), nil
+	return data, mime, nil
 }
 
 // sanitizeFilename removes characters that are invalid in Windows filenames
