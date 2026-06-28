@@ -18,6 +18,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Ltime)
+
 	if err := godotenv.Load("../.env"); err != nil {
 		log.Println("Info: No .env file found, relying on system environment variables")
 	}
@@ -45,22 +47,27 @@ func main() {
 
 	// 5. Setup server & routes
 	e := echo.New()
-	e.Use(middleware.Logger())
+	e.HideBanner = true
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			err := next(c)
+			if c.Path() == "/api/health" {
+				return err
+			}
+			if err != nil {
+				code := http.StatusInternalServerError
+				var he *echo.HTTPError
+				if errors.As(err, &he) {
+					code = he.Code
+				}
+				log.Printf("ERR %d | %s %s | %v", code, c.Request().Method, c.Request().RequestURI, err)
+			} else if status := c.Response().Status; status >= 400 {
+				log.Printf("ERR %d | %s %s", status, c.Request().Method, c.Request().RequestURI)
+			}
+			return err
+		}
+	})
 	e.Use(middleware.Recover())
-
-	e.HTTPErrorHandler = func(err error, c echo.Context) {
-		code := http.StatusInternalServerError
-		var he *echo.HTTPError
-		if errors.As(err, &he) {
-			code = he.Code
-		}
-		if code >= 500 {
-			c.Logger().Errorf("[%s %s] %d: %v", c.Request().Method, c.Request().URL.Path, code, err)
-		} else {
-			c.Logger().Warnf("[%s %s] %d: %v", c.Request().Method, c.Request().URL.Path, code, err)
-		}
-		e.DefaultHTTPErrorHandler(err, c)
-	}
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -74,12 +81,14 @@ func main() {
 
 	// Standard routes
 	e.GET("/api/playlist/:id", h.GetPlaylist)
+	e.GET("/api/album/:id", h.GetAlbum)
 	e.GET("/api/track/:id", h.GetTrackDetails)
 	e.GET("/api/track/:id/video", h.GetTrackVideo)
 	e.GET("/api/track/:id/download", h.DownloadTrackAudio)
 
 	// Async/queue routes
 	e.POST("/api/playlist/:id/download", h.StartPlaylistDownload)
+	e.POST("/api/album/:id/download", h.StartAlbumDownload)
 	e.GET("/api/ws", h.HandleWebSocket)
 	e.GET("/api/download/:jobId", h.ServeDownloadFile)
 

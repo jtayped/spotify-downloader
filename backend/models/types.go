@@ -7,6 +7,7 @@ type JobType string
 const (
 	JobTypePlaylist JobType = "playlist"
 	JobTypeTrack    JobType = "track"
+	JobTypeAlbum    JobType = "album"
 )
 
 type ProgressType string
@@ -20,9 +21,9 @@ const (
 // --- Queue & WebSocket Models ---
 
 type Job struct {
-	ID         string  `json:"id"`
-	PlaylistID string  `json:"playlistId"`
-	Type       JobType `json:"type" tstype:"'playlist' | 'track'"`
+	ID     string  `json:"id"`
+	ItemID string  `json:"itemId"`
+	Type   JobType `json:"type" tstype:"'playlist' | 'track' | 'album'"`
 }
 
 type ProgressMessage struct {
@@ -65,6 +66,8 @@ type TrackDTO struct {
 	PreviewURL  string      `json:"previewUrl"`
 	ExternalURL string      `json:"externalUrl"`
 	AddedAt     string      `json:"addedAt"`
+	TrackNumber int         `json:"trackNumber"`
+	DiscNumber  int         `json:"discNumber"`
 }
 
 type TrackDetailsDTO struct {
@@ -91,6 +94,24 @@ type AlbumDTO struct {
 	Name        string `json:"name"`
 	ImageURL    string `json:"imageUrl"`
 	ReleaseDate string `json:"releaseDate"`
+}
+
+// --- Album Models ---
+
+type AlbumMetadata struct {
+	ID          string      `json:"id"`
+	Name        string      `json:"name"`
+	Artists     []ArtistDTO `json:"artists"`
+	ImageURL    string      `json:"imageUrl"`
+	ReleaseDate string      `json:"releaseDate"`
+	TotalTracks int         `json:"totalTracks"`
+	ExternalURL string      `json:"externalUrl"`
+}
+
+type AlbumResponse struct {
+	Metadata *AlbumMetadata `json:"metadata"`
+	Tracks   []TrackDTO     `json:"tracks"`
+	Total    int            `json:"total"`
 }
 
 // --- YouTube Models ---

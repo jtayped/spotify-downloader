@@ -4,6 +4,8 @@ import (
 	"backend/internal/ws"
 	"backend/models"
 	"context"
+	"log"
+	"time"
 )
 
 // DownloadService is the interface the queue workers call to process a job.
@@ -40,6 +42,9 @@ func (q *Queue) StartWorkers(count int) {
 
 func (q *Queue) worker() {
 	for job := range q.jobs {
+		log.Printf("[job %s] started (%s)", job.ID[:8], job.Type)
+		start := time.Now()
+
 		progressChan := make(chan models.ProgressMessage)
 
 		// Relay progress messages to the WebSocket hub.
@@ -51,10 +56,13 @@ func (q *Queue) worker() {
 		}(job.ID)
 
 		err := q.service.ProcessDownloadJob(context.Background(), job, progressChan)
+		elapsed := time.Since(start)
 
 		if err != nil {
+			log.Printf("[job %s] failed after %v: %v", job.ID[:8], elapsed.Round(time.Millisecond), err)
 			q.hub.Broadcast(job.ID, models.ProgressMessage{Type: "error", Message: err.Error()})
 		} else {
+			log.Printf("[job %s] complete in %v", job.ID[:8], elapsed.Round(time.Millisecond))
 			q.hub.Broadcast(job.ID, models.ProgressMessage{Type: "complete", Message: "Download ready"})
 		}
 

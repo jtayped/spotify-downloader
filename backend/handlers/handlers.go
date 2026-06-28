@@ -38,15 +38,33 @@ var upgrader = websocket.Upgrader{
 // --- Asynchronous / Queue Handlers ---
 
 // StartPlaylistDownload (POST /api/playlist/:id/download)
-// Enqueues a download job and returns the job ID and WebSocket URL.
+// Enqueues a playlist download job and returns the job ID and WebSocket URL.
 func (h *Handler) StartPlaylistDownload(c echo.Context) error {
 	id := c.Param("id")
 	jobID := uuid.New().String()
 
 	h.Queue.AddJob(models.Job{
-		ID:         jobID,
-		PlaylistID: id,
-		Type:       models.JobTypePlaylist,
+		ID:     jobID,
+		ItemID: id,
+		Type:   models.JobTypePlaylist,
+	})
+
+	return c.JSON(http.StatusAccepted, models.DownloadJobResponse{
+		JobID: jobID,
+		WsURL: "/api/ws?job_id=" + jobID,
+	})
+}
+
+// StartAlbumDownload (POST /api/album/:id/download)
+// Enqueues an album download job and returns the job ID and WebSocket URL.
+func (h *Handler) StartAlbumDownload(c echo.Context) error {
+	id := c.Param("id")
+	jobID := uuid.New().String()
+
+	h.Queue.AddJob(models.Job{
+		ID:     jobID,
+		ItemID: id,
+		Type:   models.JobTypeAlbum,
 	})
 
 	return c.JSON(http.StatusAccepted, models.DownloadJobResponse{

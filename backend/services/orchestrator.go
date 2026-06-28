@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 )
 
@@ -34,12 +34,24 @@ func (o *Orchestrator) ProcessDownloadJob(ctx context.Context, job models.Job, p
 	}
 	defer os.RemoveAll(tempDir)
 
-	// 2. Fetch playlist tracks
-	progressChan <- models.ProgressMessage{Type: "progress", Message: "Fetching playlist info..."}
+	// 2. Fetch tracks (playlist or album)
+	progressChan <- models.ProgressMessage{Type: "progress", Message: "Fetching track list..."}
 
-	tracks, err := o.Spotify.GetPlaylistItems(ctx, job.PlaylistID)
-	if err != nil {
-		return fmt.Errorf("orchestrator: fetch playlist: %w", err)
+	var (
+		tracks []models.TrackDTO
+		err    error
+	)
+	switch job.Type {
+	case models.JobTypeAlbum:
+		tracks, err = o.Spotify.GetAlbumItems(ctx, job.ItemID)
+		if err != nil {
+			return fmt.Errorf("orchestrator: fetch album: %w", err)
+		}
+	default:
+		tracks, err = o.Spotify.GetPlaylistItems(ctx, job.ItemID)
+		if err != nil {
+			return fmt.Errorf("orchestrator: fetch playlist: %w", err)
+		}
 	}
 
 	totalTracks := len(tracks)
@@ -94,18 +106,26 @@ func (o *Orchestrator) ProcessDownloadJob(ctx context.Context, job models.Job, p
 				}
 			}
 
-			safeTitle := strings.ReplaceAll(fmt.Sprintf("%s - %s", artistName, t.Name), "/", "-")
+			safeTitle := sanitizeFilename(fmt.Sprintf("%s - %s", artistName, t.Name))
 			filePath := filepath.Join(tempDir, fmt.Sprintf("%s.mp3", safeTitle))
 
 			if err := o.YouTube.DownloadToFile(ctx, videoID, filePath, updateCallback); err != nil {
 				errChan <- fmt.Errorf("orchestrator: download %q: %w", t.Name, err)
 				return
 			}
+
+			if err := WriteMP3Metadata(filePath, t); err != nil {
+				log.Printf("[orchestrator] metadata for %q: %v", t.Name, err)
+			}
 		}(i, track)
 	}
 
 	wg.Wait()
 	close(errChan)
+
+	for err := range errChan {
+		log.Printf("[orchestrator] track error: %v", err)
+	}
 
 	// 4. Create ZIP file
 	progressChan <- models.ProgressMessage{Type: "progress", Message: "Zipping files...", Progress: 99}

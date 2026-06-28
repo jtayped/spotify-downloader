@@ -139,6 +139,144 @@ func (s *SpotifyService) GetPlaylistItems(ctx context.Context, playlistID string
 	return mapTracksToDTO(allTracks), nil
 }
 
+// GetAlbumMetadata returns album metadata (name, artists, images, release date, total tracks).
+func (s *SpotifyService) GetAlbumMetadata(ctx context.Context, albumID string) (models.AlbumMetadata, error) {
+	id := spotify.ID(albumID)
+	album, err := s.client.GetAlbum(ctx, id)
+	if err != nil {
+		return models.AlbumMetadata{}, fmt.Errorf("spotify: get album metadata: %w", err)
+	}
+
+	imgURL := ""
+	if len(album.Images) > 0 {
+		imgURL = album.Images[0].URL
+	}
+
+	artists := make([]models.ArtistDTO, len(album.Artists))
+	for i, a := range album.Artists {
+		artists[i] = models.ArtistDTO{Name: a.Name, ID: a.ID.String()}
+	}
+
+	return models.AlbumMetadata{
+		ID:          album.ID.String(),
+		Name:        album.Name,
+		Artists:     artists,
+		ImageURL:    imgURL,
+		ReleaseDate: album.ReleaseDate,
+		TotalTracks: int(album.Tracks.Total),
+		ExternalURL: album.ExternalURLs["spotify"],
+	}, nil
+}
+
+// GetAlbumTracksPaged returns a page of tracks for an album along with the total track count.
+func (s *SpotifyService) GetAlbumTracksPaged(ctx context.Context, albumID string, offset, limit int) ([]models.TrackDTO, int, error) {
+	id := spotify.ID(albumID)
+
+	album, err := s.client.GetAlbum(ctx, id)
+	if err != nil {
+		return nil, 0, fmt.Errorf("spotify: get album for tracks: %w", err)
+	}
+
+	imgURL := ""
+	if len(album.Images) > 0 {
+		imgURL = album.Images[0].URL
+	}
+	albumDTO := models.AlbumDTO{
+		Name:        album.Name,
+		ImageURL:    imgURL,
+		ReleaseDate: album.ReleaseDate,
+	}
+
+	page, err := s.client.GetAlbumTracks(ctx, id, spotify.Limit(limit), spotify.Offset(offset))
+	if err != nil {
+		return nil, 0, fmt.Errorf("spotify: get album tracks: %w", err)
+	}
+
+	dtos := make([]models.TrackDTO, 0, len(page.Tracks))
+	for _, track := range page.Tracks {
+		artists := make([]models.ArtistDTO, len(track.Artists))
+		for i, a := range track.Artists {
+			artists[i] = models.ArtistDTO{Name: a.Name, ID: a.ID.String()}
+		}
+		dtos = append(dtos, models.TrackDTO{
+			ID:          track.ID.String(),
+			Name:        track.Name,
+			Artists:     artists,
+			Album:       albumDTO,
+			DurationMs:  int(track.Duration),
+			Explicit:    track.Explicit,
+			PreviewURL:  track.PreviewURL,
+			ExternalURL: track.ExternalURLs["spotify"],
+			TrackNumber: int(track.TrackNumber),
+			DiscNumber:  int(track.DiscNumber),
+		})
+	}
+
+	return dtos, int(page.Total), nil
+}
+
+// GetAlbumItems retrieves ALL tracks in an album, handling pagination automatically.
+// Used by the orchestrator for bulk downloads.
+func (s *SpotifyService) GetAlbumItems(ctx context.Context, albumID string) ([]models.TrackDTO, error) {
+	id := spotify.ID(albumID)
+
+	album, err := s.client.GetAlbum(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("spotify: get album: %w", err)
+	}
+
+	imgURL := ""
+	if len(album.Images) > 0 {
+		imgURL = album.Images[0].URL
+	}
+	albumDTO := models.AlbumDTO{
+		Name:        album.Name,
+		ImageURL:    imgURL,
+		ReleaseDate: album.ReleaseDate,
+	}
+
+	var allTracks []models.TrackDTO
+	limit := 50
+	offset := 0
+
+	for {
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
+		page, err := s.client.GetAlbumTracks(ctx, id, spotify.Limit(limit), spotify.Offset(offset))
+		if err != nil {
+			return nil, fmt.Errorf("spotify: get album tracks at offset %d: %w", offset, err)
+		}
+
+		for _, track := range page.Tracks {
+			artists := make([]models.ArtistDTO, len(track.Artists))
+			for i, a := range track.Artists {
+				artists[i] = models.ArtistDTO{Name: a.Name, ID: a.ID.String()}
+			}
+			allTracks = append(allTracks, models.TrackDTO{
+				ID:          track.ID.String(),
+				Name:        track.Name,
+				Artists:     artists,
+				Album:       albumDTO,
+				DurationMs:  int(track.Duration),
+				Explicit:    track.Explicit,
+				PreviewURL:  track.PreviewURL,
+				ExternalURL: track.ExternalURLs["spotify"],
+				TrackNumber: int(track.TrackNumber),
+				DiscNumber:  int(track.DiscNumber),
+			})
+		}
+
+		if len(allTracks) >= int(page.Total) || len(page.Tracks) == 0 {
+			break
+		}
+		offset += len(page.Tracks)
+	}
+
+	return allTracks, nil
+}
+
 // mapTracksToDTO converts Spotify playlist items to TrackDTOs, skipping podcasts.
 func mapTracksToDTO(items []spotify.PlaylistItem) []models.TrackDTO {
 	dtos := make([]models.TrackDTO, 0, len(items))
@@ -161,15 +299,21 @@ func mapTracksToDTO(items []spotify.PlaylistItem) []models.TrackDTO {
 		}
 
 		dtos = append(dtos, models.TrackDTO{
-			ID:          track.ID.String(),
-			Name:        track.Name,
-			Artists:     artists,
-			Album:       models.AlbumDTO{Name: track.Album.Name, ImageURL: albumImg},
+			ID:      track.ID.String(),
+			Name:    track.Name,
+			Artists: artists,
+			Album: models.AlbumDTO{
+				Name:        track.Album.Name,
+				ImageURL:    albumImg,
+				ReleaseDate: track.Album.ReleaseDate,
+			},
 			DurationMs:  int(track.Duration),
 			Explicit:    track.Explicit,
 			PreviewURL:  track.PreviewURL,
 			ExternalURL: track.ExternalURLs["spotify"],
 			AddedAt:     item.AddedAt,
+			TrackNumber: int(track.TrackNumber),
+			DiscNumber:  int(track.DiscNumber),
 		})
 	}
 	return dtos
