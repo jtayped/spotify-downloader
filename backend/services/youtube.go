@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"os"
 	"os/exec"
@@ -39,6 +40,39 @@ func parseProgress(line string) float64 {
 		return val
 	}
 	return 0
+}
+
+func resolveCookiesPath() (string, bool) {
+	if p := os.Getenv("COOKIES_PATH"); p != "" {
+		if _, err := os.Stat(p); err == nil {
+			return p, true
+		}
+		log.Printf("[youtube] COOKIES_PATH set to %q but file not found, proceeding without cookies", p)
+		return "", false
+	}
+	cwd, _ := os.Getwd()
+	p := filepath.Join(cwd, "..", "cookies.txt")
+	if _, err := os.Stat(p); err == nil {
+		return p, true
+	}
+	return "", false
+}
+
+// isNonRetriable returns true for errors that will not improve with a different player client.
+func isNonRetriable(stderr string) bool {
+	permanent := []string{
+		"Video unavailable",
+		"This video has been removed",
+		"Private video",
+		"has been removed by the user",
+		"This video is not available",
+	}
+	for _, pat := range permanent {
+		if strings.Contains(stderr, pat) {
+			return true
+		}
+	}
+	return false
 }
 
 // GetAudioStream starts yt-dlp and returns the stdout pipe for raw audio streaming.
@@ -116,45 +150,82 @@ func (s *YouTubeService) FindClosestVideoID(ctx context.Context, artist, title s
 	return bestVideoID, nil
 }
 
-// DownloadToFile runs yt-dlp with MP3 extraction and saves the result to targetPath.
-// progressCallback is invoked with a 0–100 percentage as yt-dlp reports progress.
+// DownloadToFile downloads a YouTube video as MP3, retrying with alternate player
+// clients if the first attempt fails. progressCallback receives 0–100 percentages.
 func (s *YouTubeService) DownloadToFile(ctx context.Context, videoID, targetPath string, progressCallback func(float64)) error {
-	cwd, _ := os.Getwd()
-	cookiesPath := filepath.Join(cwd, "..", "cookies.txt")
-
-	if _, err := os.Stat(cookiesPath); os.IsNotExist(err) {
-		return fmt.Errorf("youtube: download: cookies.txt missing at: %s", cookiesPath)
+	cookiesPath, hasCookies := resolveCookiesPath()
+	if !hasCookies {
+		log.Printf("[youtube] no cookies.txt found, downloading without cookies")
 	}
 
-	cmd := exec.CommandContext(ctx, s.binPath,
+	playerClients := []string{"default,-tv", "web", "mweb"}
+	var lastErr error
+
+	for i, client := range playerClients {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
+		// Only forward progress on the first attempt to avoid backwards jumps in the UI.
+		cb := progressCallback
+		if i > 0 {
+			log.Printf("[youtube] retrying %s with player_client=%s", videoID, client)
+			cb = func(float64) {}
+		}
+
+		stderrStr, err := s.downloadWithClient(ctx, videoID, targetPath, cookiesPath, hasCookies, client, cb)
+		if err == nil {
+			return nil
+		}
+
+		if isNonRetriable(stderrStr) {
+			return fmt.Errorf("youtube: download %s: permanent error: %s", videoID, stderrStr)
+		}
+
+		log.Printf("[youtube] download %s failed (client=%s): %v", videoID, client, err)
+		lastErr = err
+	}
+
+	return fmt.Errorf("youtube: download %s: all player clients failed: %w", videoID, lastErr)
+}
+
+func (s *YouTubeService) downloadWithClient(ctx context.Context, videoID, targetPath, cookiesPath string, hasCookies bool, playerClient string, progressCallback func(float64)) (stderrOutput string, err error) {
+	// Clean up any partial file left by a previous attempt.
+	os.Remove(targetPath)
+	os.Remove(targetPath + ".part")
+
+	args := []string{
 		"-x", "--audio-format", "mp3",
-		"--cookies", cookiesPath,
+		"--extractor-args", "youtube:player_client=" + playerClient,
 		"--min-sleep-interval", "5",
 		"--max-sleep-interval", "15",
-		"--extractor-args", "youtube:player_client=default,-tv",
 		"-o", targetPath,
 		"--newline",
-		"https://www.youtube.com/watch?v="+videoID,
-	)
+		"https://www.youtube.com/watch?v=" + videoID,
+	}
+
+	if hasCookies {
+		args = append([]string{"--cookies", cookiesPath}, args...)
+	}
+
+	cmd := exec.CommandContext(ctx, s.binPath, args...)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("youtube: download: stdout pipe: %w", err)
+		return "", fmt.Errorf("stdout pipe: %w", err)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("youtube: download: stderr pipe: %w", err)
+		return "", fmt.Errorf("stderr pipe: %w", err)
 	}
 
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("youtube: download: start process: %w", err)
+		return "", fmt.Errorf("start process: %w", err)
 	}
 
 	var stderrBuf bytes.Buffer
-	go func() {
-		io.Copy(&stderrBuf, stderr)
-	}()
+	go func() { io.Copy(&stderrBuf, stderr) }()
 
 	scanner := bufio.NewScanner(stdout)
 	for scanner.Scan() {
@@ -167,8 +238,8 @@ func (s *YouTubeService) DownloadToFile(ctx context.Context, videoID, targetPath
 	}
 
 	if err := cmd.Wait(); err != nil {
-		return fmt.Errorf("youtube: download: yt-dlp failed: %v | stderr: %s", err, stderrBuf.String())
+		return stderrBuf.String(), fmt.Errorf("yt-dlp exited with error: %w", err)
 	}
 
-	return nil
+	return "", nil
 }
