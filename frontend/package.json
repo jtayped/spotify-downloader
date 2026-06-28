@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "build": "dotenv -e ../.env -- next build",
-    "check": "next lint && tsc --noEmit",
+    "check": "dotenv -e ../.env -- next lint && tsc --noEmit",
     "dev": "dotenv -e ../.env -- next dev --turbo",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "lint": "next lint",
+    "lint": "dotenv -e ../.env -- next lint",
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "start": "dotenv -e ../.env -- next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "dotenv -e ../.env -- tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { formatDuration, formatDate } from "@/lib/utils";
 import Link from "next/link";
-import { Clock } from "lucide-react";
+import { Clock, Music } from "lucide-react";
 
 export const columns: ColumnDef<TrackDTO>[] = [
   {
@@ -40,11 +40,7 @@ export const columns: ColumnDef<TrackDTO>[] = [
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <HugeiconsIcon
-                  icon={Music}
-                  size={20}
-                  className="text-muted-foreground/50"
-                />
+                <Music />
               </div>
             )}
           </div>
@@ -101,7 +97,7 @@ export const columns: ColumnDef<TrackDTO>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="font-variant-numeric text-muted-foreground text-right pr-4 tabular-nums">
+      <div className="font-variant-numeric text-muted-foreground pr-4 text-right tabular-nums">
         {formatDuration(row.original.durationMs)}
       </div>
     ),

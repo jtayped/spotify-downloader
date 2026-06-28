@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import {
   InputGroup,
   InputGroupAddon,
@@ -9,120 +9,149 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Button } from "../ui/button";
-import { Search, ClipboardPaste, Trash2, Check, X } from "lucide-react";
+import {
+  Search,
+  ClipboardPaste,
+  Trash2,
+  Check,
+  X,
+  ArrowRight,
+  Music2,
+  ListMusic,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type SpotifyType = "track" | "playlist";
+
+function parseSpotifyUrl(url: string): { type: SpotifyType; id: string } | null {
+  try {
+    if (!url) return null;
+    const parsed = new URL(url);
+    if (parsed.hostname !== "open.spotify.com") return null;
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    const type = segments[0];
+    const id = segments[1];
+    if ((type === "track" || type === "playlist") && id) {
+      return { type: type as SpotifyType, id };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 const UrlInput = () => {
   const [inputValue, setInputValue] = useState("");
   const router = useRouter();
 
-  // Helper function to extract type and ID
-  const parseSpotifyUrl = (url: string) => {
-    try {
-      if (!url) return null;
-      const parsedUrl = new URL(url);
-
-      // Check if hostname is valid (open.spotify.com)
-      if (parsedUrl.hostname !== "open.spotify.com") return null;
-
-      // Pathname usually looks like /track/ID or /playlist/ID
-      // split('/') results in ["", "type", "id", ...]
-      const segments = parsedUrl.pathname.split("/").filter(Boolean);
-      const type = segments[0];
-      const id = segments[1];
-
-      // Strict validation: Only allow 'track' or 'playlist'
-      if ((type === "track" || type === "playlist") && id) {
-        return { type, id };
-      }
-
-      return null;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_) {
-      return null;
-    }
-  };
-
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
       setInputValue(text);
-    } catch (err) {
-      console.error("Failed to read clipboard contents: ", err);
+    } catch {
+      // clipboard not available or denied
     }
-  };
-
-  const clearInput = () => {
-    setInputValue("");
-  };
-
-  const getStatus = () => {
-    if (!inputValue) return "empty";
-    // Reuse the parser to determine validity
-    return parseSpotifyUrl(inputValue) ? "valid" : "invalid";
   };
 
   const handleSubmit = () => {
     const data = parseSpotifyUrl(inputValue);
     if (data) {
-      // Redirect to /{type}/{id}
       router.push(`/${data.type}/${data.id}`);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && status === "valid") {
+    if (e.key === "Enter") {
       handleSubmit();
     }
   };
 
-  const status = getStatus();
+  const status = !inputValue
+    ? ("empty" as const)
+    : parseSpotifyUrl(inputValue)
+      ? ("valid" as const)
+      : ("invalid" as const);
+
+  const parsed = status === "valid" ? parseSpotifyUrl(inputValue) : null;
 
   return (
-    <div className="flex w-full items-center gap-2">
-      <InputGroup className="w-full transition-all duration-200 ease-in-out">
-        <InputGroupInput
-          className="min-w-0 flex-1 bg-transparent"
-          placeholder="Paste Spotify link (Track or Playlist)..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full items-center gap-2">
+        <InputGroup className="w-full">
+          <InputGroupAddon align="inline-start">
+            <Search
+              className={cn(
+                "transition-colors duration-150",
+                status === "valid" && "text-primary",
+                status === "invalid" && "text-destructive"
+              )}
+            />
+          </InputGroupAddon>
 
-        {/* Start Addon: Search Icon */}
-        <InputGroupAddon align="inline-start">
-          <Search />
-        </InputGroupAddon>
+          <InputGroupInput
+            className="min-w-0 flex-1"
+            placeholder="Paste Spotify link..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            aria-label="Spotify URL"
+            aria-invalid={status === "invalid" ? true : undefined}
+          />
 
-        {/* End Addon: Action Buttons & Validation */}
-        <InputGroupAddon align="inline-end" className="flex items-center gap-1">
-          {inputValue.length === 0 ? (
-            <InputGroupButton
-              onClick={handlePaste}
-              size="icon-sm"
-              aria-label="Paste from clipboard"
-              title="Paste from clipboard"
-            >
-              <ClipboardPaste />
-            </InputGroupButton>
+          <InputGroupAddon align="inline-end" className="flex items-center gap-1">
+            {inputValue.length === 0 ? (
+              <InputGroupButton
+                onClick={handlePaste}
+                size="icon-sm"
+                aria-label="Paste from clipboard"
+                title="Paste from clipboard"
+              >
+                <ClipboardPaste />
+              </InputGroupButton>
+            ) : (
+              <InputGroupButton
+                onClick={() => setInputValue("")}
+                size="icon-sm"
+                aria-label="Clear"
+                title="Clear"
+              >
+                <Trash2 />
+              </InputGroupButton>
+            )}
+
+            {status === "valid" && (
+              <Check className="size-3.5 shrink-0 text-primary" />
+            )}
+            {status === "invalid" && (
+              <X className="size-3.5 shrink-0 text-destructive" />
+            )}
+          </InputGroupAddon>
+        </InputGroup>
+
+        <Button
+          onClick={handleSubmit}
+          disabled={status !== "valid"}
+          className="shrink-0"
+        >
+          Open
+          <ArrowRight />
+        </Button>
+      </div>
+
+      {parsed && (
+        <div className="animate-in fade-in slide-in-from-top-1 flex items-center gap-1.5 text-xs text-muted-foreground duration-150">
+          {parsed.type === "playlist" ? (
+            <ListMusic className="size-3 shrink-0 text-primary" />
           ) : (
-            <InputGroupButton
-              onClick={clearInput}
-              size="sm"
-              aria-label="Clear input"
-              title="Clear input"
-            >
-              <Trash2 />
-            </InputGroupButton>
+            <Music2 className="size-3 shrink-0 text-primary" />
           )}
-
-          {status === "valid" && <Check />}
-          {status === "invalid" && <X />}
-        </InputGroupAddon>
-      </InputGroup>
-
-      <Button onClick={handleSubmit} disabled={status !== "valid"}>
-        Submit
-      </Button>
+          <span className="capitalize">{parsed.type} detected</span>
+          <span className="opacity-30">·</span>
+          <span className="opacity-60">
+            Press <kbd className="font-mono text-[10px]">↵</kbd> to open
+          </span>
+        </div>
+      )}
     </div>
   );
 };

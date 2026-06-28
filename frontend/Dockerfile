@@ -5,23 +5,22 @@ FROM golang:1.25-alpine AS tygo-gen
 
 WORKDIR /workspace
 
-# 1. Install Tygo
+# Install Tygo
 RUN go install github.com/gzuidhof/tygo@latest
 
-# 2. Copy config and backend source
+# Copy config and backend source
 COPY tygo.yaml .
 COPY backend/ ./backend/
 
-# 3. [CRITICAL FIX] Initialize a Go Workspace
-# This tells Go: "The code in ./backend is a local module, please use it."
+# Initialize a Go Workspace so tygo can resolve the local module
 RUN go work init ./backend
 
-# 4. Create output directory and Generate
+# Create output directory and generate types
 RUN mkdir -p frontend/src/types
 RUN tygo generate
 
 # --- Stage 2: Node Base ---
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # --- Stage 3: Install Dependencies ---
 FROM base AS deps
@@ -38,15 +37,18 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY frontend/ .
 
-# 5. Copy the generated types from Stage 1
+# Copy the generated types from Stage 1
 COPY --from=tygo-gen /workspace/frontend/src/types/api.ts ./src/types/api.ts
 
-# 6. Build Next.js
+# Accept API_URL as a build argument and expose it to Next.js at build time
+ARG API_URL
+ENV API_URL=$API_URL
+
 ENV SKIP_ENV_VALIDATION=1
 RUN npx next build
 
 # --- Stage 5: Production Runner ---
-FROM base AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 

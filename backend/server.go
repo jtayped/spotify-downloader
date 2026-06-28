@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
 
 	"backend/handlers"
 	"backend/internal/queue"
@@ -18,52 +20,47 @@ func main() {
 		log.Println("Info: No .env file found, relying on system environment variables")
 	}
 
-	// 1. Initialize Services
-	spotifySvc, err := services.NewSpotifyService()
+	ctx := context.Background()
+
+	// 1. Initialise services
+	spotifySvc, err := services.NewSpotifyService(ctx, os.Getenv("SPOTIFY_CLIENT_ID"), os.Getenv("SPOTIFY_CLIENT_SECRET"))
 	if err != nil {
 		log.Fatal("Failed to init Spotify:", err)
 	}
 
-	youtubeSvc, err := services.NewYouTubeService()
-	if err != nil {
-		log.Fatal("Failed to init YouTube:", err)
-	}
+	youtubeSvc := services.NewYouTubeService()
 
-	// 2. Initialize Orchestrator (Worker Logic)
-	orchestrator := &services.Orchestrator{
-		Spotify: spotifySvc,
-		YouTube: youtubeSvc,
-	}
+	// 2. Initialise orchestrator (worker logic)
+	orchestrator := services.NewOrchestrator(spotifySvc, youtubeSvc)
 
-	// 3. Initialize Async Components
+	// 3. Initialise async components
 	hub := ws.NewHub()
-	q := queue.NewQueue(hub, orchestrator)
-	q.StartWorkers(2) // Start 2 background workers
+	q := queue.NewQueue(hub, orchestrator, 100)
+	q.StartWorkers(2)
 
-	// 4. Initialize Handler with all dependencies
-	h := &handlers.Handler{
-		Spotify: spotifySvc,
-		YouTube: youtubeSvc,
-		Queue:   q,
-		Hub:     hub,
-	}
+	// 4. Initialise handler with all dependencies
+	h := handlers.NewHandler(spotifySvc, youtubeSvc, q, hub)
 
-	// 5. Setup Server & Routes
+	// 5. Setup server & routes
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"*"},
+	}))
 
-	// Standard Routes
+	// Standard routes
 	e.GET("/api/playlist/:id", h.GetPlaylist)
 	e.GET("/api/track/:id", h.GetTrackDetails)
 	e.GET("/api/track/:id/video", h.GetTrackVideo)
-	e.GET("/api/track/:id/download", h.DownloadTrackAudio) // Direct stream (single track)
+	e.GET("/api/track/:id/download", h.DownloadTrackAudio)
 
-	// Async/Queue Routes
-	e.POST("/api/playlist/:id/download", h.StartPlaylistDownload) // Start Job
-	e.GET("/api/ws", h.HandleWebSocket)                           // Listen for progress
-	e.GET("/api/download/:jobId", h.ServeDownloadFile)            // Download result
+	// Async/queue routes
+	e.POST("/api/playlist/:id/download", h.StartPlaylistDownload)
+	e.GET("/api/ws", h.HandleWebSocket)
+	e.GET("/api/download/:jobId", h.ServeDownloadFile)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

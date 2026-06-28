@@ -1,32 +1,25 @@
-# backend/Dockerfile
-
-# 1. Use Go 1.25 to match your go.mod requirement
 FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-# 2. Copy go.mod and go.sum from the 'backend' folder
-#    (Since build context is root, we must specify 'backend/')
-COPY backend/go.mod backend/go.sum ./
-
-# 3. Download dependencies
+COPY go.mod go.sum ./
 RUN go mod download
 
-# 4. Copy the rest of the backend source code
-COPY backend/ .
+COPY . .
 
-# 5. Build the Go binary
-RUN go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-# --- Final Stage ---
 FROM alpine:latest
-WORKDIR /root/
 
-# 6. Copy the binary from the builder stage
+RUN apk --no-cache add ca-certificates python3 ffmpeg curl
+
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp \
+    && chmod a+rx /usr/local/bin/yt-dlp
+
+WORKDIR /app
+
 COPY --from=builder /app/main .
 
-# 7. Expose the port (Standard for Go is often 8080)
-EXPOSE 8080
+EXPOSE 1323
 
-# 8. Run the app
 CMD ["./main"]

@@ -18,6 +18,7 @@ const config = {
   images: {
     remotePatterns: [
       new URL("https://image-cdn-ak.spotifycdn.com/image/**"),
+      new URL("https://image-cdn-fa.spotifycdn.com/image/**"),
       new URL("https://i.scdn.co/image/**"),
     ],
   },

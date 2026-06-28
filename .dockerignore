@@ -10,4 +10,4 @@ frontend/out
 frontend/build
 
 # Go
-backend/storage
+backend/tmp

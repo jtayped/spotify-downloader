@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-28T00:00:00Z",
+  "title": "Design System: Spotify Downloader",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Vinyl Green",
+        "canonical": "oklch(0.65 0.18 132)",
+        "tonalRamp": [
+          "oklch(0.15 0.08 132)",
+          "oklch(0.25 0.10 132)",
+          "oklch(0.35 0.13 132)",
+          "oklch(0.45 0.15 132)",
+          "oklch(0.55 0.17 132)",
+          "oklch(0.65 0.18 132)",
+          "oklch(0.77 0.20 131)",
+          "oklch(0.92 0.09 132)"
+        ]
+      },
+      "primary-bright": {
+        "role": "primary",
+        "displayName": "Vinyl Green — Bright",
+        "canonical": "oklch(0.77 0.20 131)",
+        "tonalRamp": [
+          "oklch(0.15 0.08 131)",
+          "oklch(0.28 0.11 131)",
+          "oklch(0.40 0.14 131)",
+          "oklch(0.52 0.16 131)",
+          "oklch(0.62 0.18 131)",
+          "oklch(0.70 0.19 131)",
+          "oklch(0.77 0.20 131)",
+          "oklch(0.90 0.10 131)"
+        ]
+      },
+      "canvas-black": {
+        "role": "neutral",
+        "displayName": "Canvas Black",
+        "canonical": "oklch(0.145 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.922 0 0)",
+          "oklch(0.97 0 0)"
+        ]
+      },
+      "canvas-white": {
+        "role": "neutral",
+        "displayName": "Canvas White",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.922 0 0)",
+          "oklch(0.97 0 0)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "fault-red": {
+        "role": "semantic",
+        "displayName": "Fault Red",
+        "canonical": "oklch(0.58 0.22 27)",
+        "tonalRamp": [
+          "oklch(0.25 0.10 27)",
+          "oklch(0.35 0.14 27)",
+          "oklch(0.45 0.17 27)",
+          "oklch(0.52 0.19 27)",
+          "oklch(0.58 0.22 27)",
+          "oklch(0.65 0.20 27)",
+          "oklch(0.75 0.15 27)",
+          "oklch(0.90 0.08 27)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Playlist and track names at hero scale. One per page, never inside a card or list." },
+      "headline": { "displayName": "Headline", "purpose": "Secondary page headings. Rare by design — used when a section needs named hierarchy." },
+      "title": { "displayName": "Title", "purpose": "Card titles, column headers, UI labels. Default for named interface elements." },
+      "body": { "displayName": "Body", "purpose": "Track descriptions, metadata copy, contextual explanations. Max line length 65ch." },
+      "label": { "displayName": "Label", "purpose": "Supporting metadata: owner, track count, release year, status messages. Not uppercase." },
+      "mono": { "displayName": "Mono", "purpose": "Durations, progress percentages, track numbers. tabular-nums always active." }
+    },
+    "shadows": [
+      {
+        "name": "content-md",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Playlist cover image. Content shadow, not UI shadow."
+      },
+      {
+        "name": "content-lg",
+        "value": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+        "purpose": "Track detail album art. Deepest shadow in the system. Exclusive to cover art."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for state transitions. Used on buttons, inputs, download status."
+      },
+      {
+        "name": "ease-out-fast",
+        "value": "cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Snappy feedback: hover fills, focus rings appearing."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Hover and focus state transitions."
+      },
+      {
+        "name": "duration-standard",
+        "value": "200ms",
+        "purpose": "Progress bar fill, download button state changes."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main call-to-action. Used for Download and Submit actions.",
+      "html": "<button class=\"ds-btn-primary\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:-2px;margin-right:6px\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"7 10 12 15 17 10\"/><line x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\"/></svg>Download</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 10px; background: var(--primary); color: var(--primary-foreground); font-family: var(--font-sans, 'Geist', sans-serif); font-size: 12px; font-weight: 500; border: none; border-radius: 0; cursor: pointer; transition: background 150ms cubic-bezier(0, 0, 0.2, 1), opacity 150ms ease; white-space: nowrap; } .ds-btn-primary:hover { background: oklch(0.57 0.16 132); } .ds-btn-primary:focus-visible { outline: none; border: 1px solid var(--ring); box-shadow: 0 0 0 1px var(--ring); } .ds-btn-primary:disabled { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions. Used for external links, reset, secondary CTAs.",
+      "html": "<button class=\"ds-btn-outline\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:-2px;margin-right:6px\"><path d=\"M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4\"/><polyline points=\"10 17 15 12 10 7\"/><line x1=\"15\" x2=\"3\" y1=\"12\" y2=\"12\"/></svg>Open in Spotify</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 10px; background: transparent; color: var(--foreground); font-family: var(--font-sans, 'Geist', sans-serif); font-size: 12px; font-weight: 500; border: 1px solid var(--border); border-radius: 0; cursor: pointer; transition: background 150ms ease; white-space: nowrap; } .ds-btn-outline:hover { background: var(--muted); } .ds-btn-outline:focus-visible { outline: none; border-color: var(--ring); box-shadow: 0 0 0 1px oklch(0.556 0 0 / 0.5); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard text field. Used standalone and inside the URL InputGroup.",
+      "html": "<input class=\"ds-input\" placeholder=\"Paste Spotify link...\" />",
+      "css": ".ds-input { display: block; width: 100%; height: 32px; padding: 4px 10px; background: transparent; color: var(--foreground); font-family: var(--font-sans, 'Geist', sans-serif); font-size: 12px; border: 1px solid var(--border); border-radius: 0; outline: none; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: var(--muted-foreground); } .ds-input:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 1px oklch(0.556 0 0 / 0.5); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Surface container. Used for the home page URL entry panel.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-header\"><div class=\"ds-card-title\">spotify downloader</div><div class=\"ds-card-desc\">Paste a Spotify URL to download as MP3.</div></div><div class=\"ds-card-body\"><input class=\"ds-input\" placeholder=\"Paste Spotify link...\"></div></div>",
+      "css": ".ds-card { background: var(--card); color: var(--card-foreground); border-radius: 0; padding: 16px 0; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 0 0 1px oklch(0.145 0 0 / 0.10); overflow: hidden; font-size: 12px; } .ds-card-header { display: grid; gap: 4px; padding: 0 16px; } .ds-card-title { font-family: var(--font-sans, 'Geist', sans-serif); font-size: 14px; font-weight: 500; } .ds-card-desc { font-size: 12px; color: var(--muted-foreground); line-height: 1.5; } .ds-card-body { padding: 0 16px; } .ds-input { display: block; width: 100%; height: 32px; padding: 4px 10px; background: transparent; color: var(--foreground); font-family: var(--font-sans, 'Geist', sans-serif); font-size: 12px; border: 1px solid var(--border); border-radius: 0; outline: none; box-sizing: border-box; }"
+    },
+    {
+      "name": "Progress Bar",
+      "kind": "custom",
+      "refersTo": "progress-bar",
+      "description": "Ultra-thin download progress indicator. 4px tall, sharp, Vinyl Green fill.",
+      "html": "<div class=\"ds-progress-wrap\"><div class=\"ds-progress\"><div class=\"ds-progress-fill\" style=\"transform: translateX(-40%)\"></div></div><span class=\"ds-progress-label\">Downloading... 60%</span></div>",
+      "css": ".ds-progress-wrap { display: flex; flex-direction: column; gap: 4px; width: 100%; } .ds-progress { position: relative; width: 100%; height: 4px; background: var(--muted); border-radius: 0; overflow: hidden; } .ds-progress-fill { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--primary); transform-origin: left; transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-progress-label { font-family: var(--font-mono, 'Geist Mono', monospace); font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }"
+    },
+    {
+      "name": "Download Button — Processing",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The stateful download CTA mid-progress. Shows spinner and percentage.",
+      "html": "<div class=\"ds-dl-wrap\"><button class=\"ds-btn-primary ds-btn-processing\"><svg class=\"ds-spin\" xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"margin-right:6px\"><path d=\"M21 12a9 9 0 1 1-6.219-8.56\"/></svg>67%</button><p class=\"ds-dl-msg\">Downloading Bohemian Rhapsody...</p></div>",
+      "css": ".ds-dl-wrap { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 280px; } .ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 10px; background: var(--primary); color: var(--primary-foreground); font-family: var(--font-sans, 'Geist', sans-serif); font-size: 12px; font-weight: 500; border: none; border-radius: 0; cursor: pointer; width: 100%; } .ds-btn-processing { opacity: 0.85; pointer-events: none; } .ds-spin { animation: ds-rotate 1s linear infinite; } @keyframes ds-rotate { to { transform: rotate(360deg); } } @media (prefers-reduced-motion: reduce) { .ds-spin { animation: none; opacity: 0.6; } } .ds-dl-msg { font-family: var(--font-sans, 'Geist', sans-serif); font-size: 11px; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Collector's Archive",
+    "overview": "This is the interface a music obsessive built for themselves: precise, unhurried, and quietly confident. The surface is dark by default when the OS prefers it — because album art reads best against a dark canvas, and because this tool does serious work. The green comes directly from the music it handles. Everything else gets out of the way.\n\nThe system rejects decoration by principle. There are no rounded corners on interactive elements, no ambient shadows, no gradient fills, no glassmorphism. Depth is created by tonal layering: the page, the card, the raised surface — three distinct levels, no blurring. When the green appears, it means something: a primary action, a live state, a result. Its sparing use across most of the UI makes it land harder on the download CTA.\n\nThis is not a marketing tool. It does not need to sell itself. It needs to be fast, clear, and trustworthy — something a user opens, pastes into, and closes with a ZIP in hand.",
+    "keyCharacteristics": [
+      "Sharp corners everywhere on interactive elements (0px radius on buttons, inputs, cards, progress)",
+      "Single font family (Geist) across all hierarchy levels",
+      "Green accent used as a brand signature — active states, links, progress fill, primary actions",
+      "Album art and cover images receive elevated treatment: rounded corners (0.875rem) and shadow",
+      "Thin ring-1 outlines replace box shadows for card elevation",
+      "Flat-by-default: no shadows on interactive elements at rest",
+      "Both light and dark themes are first-class; neither is an afterthought"
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "Vinyl Green appears on one thing at a time. Primary CTA, active state, or progress indicator — never two simultaneously. Its scarcity makes every appearance decisive.",
+        "section": "colors"
+      },
+      {
+        "name": "The Neutral-First Rule",
+        "body": "The canvas is neutral. Color enters only to carry information. Backgrounds, cards, borders, and typographic elements default to the neutral scale; Vinyl Green enters only when a primary action or live state demands it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Family Rule",
+        "body": "Geist does all the work. No serif, no display typeface, no secondary sans. Hierarchy is expressed through weight contrast (800 → 500 → 400) and size, not family switching. Three weights is enough.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Uppercase-Body Rule",
+        "body": "Uppercase is prohibited for body copy, descriptions, and anything longer than four words. The playlist header eyebrow is the one permitted instance.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Buttons, inputs, and cards are flat at rest. No shadow lifts them. If a component needs to feel elevated, tonal contrast is the tool; shadow is not.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Content Exception",
+        "body": "Album art is exempt from flat-by-default. It is the only element in the system that uses shadow as a structural device — because artwork depth is expected by users and because it gives the cover image visual separation from the dark canvas.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Use Vinyl Green exclusively on: the primary download CTA, active/selected row indicators, link text on hover, and progress bar fill",
+      "Keep all interactive elements (buttons, inputs, cards) at 0px border radius",
+      "Give album art rounded-xl and appropriate shadow — it is the only surface that earns visual elevation",
+      "Use ring-1 ring-foreground/10 for card outlines in place of border or box-shadow",
+      "Use Geist Mono and tabular-nums for all numerical data: durations, progress percentages, track numbers",
+      "Keep status messages (download progress, error states) inline and single-line",
+      "Verify Ghost Light and Ghost Dark contrast on their respective backgrounds before use",
+      "Use text-wrap: balance on h1-h3 headings to prevent orphaned last words",
+      "Respect prefers-reduced-motion: all transitions should collapse to instant under the media query"
+    ],
+    "donts": [
+      "Don't add border-radius to buttons, inputs, or cards — sharp corners are the visual identity",
+      "Don't use gradient fills anywhere: on text, buttons, backgrounds, or decorative elements",
+      "Don't design anything resembling a sketchy download tool: ad-adjacent layouts, warning banners, cramped fields, security-theater iconography",
+      "Don't use SaaS marketing patterns: gradient heroes, social proof counters, 'streamline your workflow' copy",
+      "Don't make the UI playful or bubbly — no pastel tones, rounded-everything softness, or bounce animations",
+      "Don't let the palette drift into default gray — neutrals must be intentional tonal layering, not lazy framework defaults",
+      "Don't use box-shadow on buttons or inputs at rest",
+      "Don't place uppercase tracked text on more than one section per view",
+      "Don't introduce a second font family",
+      "Don't clip album art or cover images with 0px radius — they always get rounded-xl"
+    ]
+  }
+}
