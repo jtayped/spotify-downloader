@@ -51,6 +51,11 @@ func main() {
 		AllowHeaders: []string{"*"},
 	}))
 
+	// Health check
+	e.GET("/api/health", func(c echo.Context) error {
+		return c.String(http.StatusOK, "ok")
+	})
+
 	// Standard routes
 	e.GET("/api/playlist/:id", h.GetPlaylist)
 	e.GET("/api/track/:id", h.GetTrackDetails)
