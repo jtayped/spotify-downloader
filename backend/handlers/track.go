@@ -15,6 +15,7 @@ func (h *Handler) GetTrackDetails(c echo.Context) error {
 
 	track, err := h.Spotify.GetTrack(ctx, id)
 	if err != nil {
+		c.Logger().Errorf("GetTrackDetails[%s]: %v", id, err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
@@ -30,6 +31,7 @@ func (h *Handler) GetTrackVideo(c echo.Context) error {
 	// 1. Fetch Track Metadata from Spotify (to ensure we have accurate duration/artist)
 	track, err := h.Spotify.GetTrack(ctx, id)
 	if err != nil {
+		c.Logger().Errorf("GetTrackVideo[%s] spotify: %v", id, err)
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "Spotify track not found"})
 	}
 
@@ -43,6 +45,7 @@ func (h *Handler) GetTrackVideo(c echo.Context) error {
 	// 3. Search YouTube for closest match
 	videoID, err := h.YouTube.FindClosestVideoID(ctx, artistName, track.Name, track.DurationMs)
 	if err != nil {
+		c.Logger().Errorf("GetTrackVideo[%s] youtube search: %v", id, err)
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "No matching YouTube video found"})
 	}
 
@@ -61,6 +64,7 @@ func (h *Handler) DownloadTrackAudio(c echo.Context) error {
 	// 1. Fetch Track Metadata (We need this for the filename)
 	track, err := h.Spotify.GetTrack(ctx, id)
 	if err != nil {
+		c.Logger().Errorf("DownloadTrackAudio[%s] spotify: %v", id, err)
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "Spotify track not found"})
 	}
 
@@ -73,6 +77,7 @@ func (h *Handler) DownloadTrackAudio(c echo.Context) error {
 	// 3. Find the YouTube Video ID
 	videoID, err := h.YouTube.FindClosestVideoID(ctx, artistName, track.Name, track.DurationMs)
 	if err != nil {
+		c.Logger().Errorf("DownloadTrackAudio[%s] youtube search: %v", id, err)
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "No matching YouTube video found"})
 	}
 
@@ -80,6 +85,7 @@ func (h *Handler) DownloadTrackAudio(c echo.Context) error {
 	// This returns the IO stream and the running command
 	stream, cmd, err := h.YouTube.GetAudioStream(ctx, videoID)
 	if err != nil {
+		c.Logger().Errorf("DownloadTrackAudio[%s] audio stream: %v", id, err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to start audio stream"})
 	}
 

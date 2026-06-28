@@ -26,11 +26,13 @@ func (h *Handler) GetPlaylist(c echo.Context) error {
 	if offset == 0 {
 		meta, err := h.Spotify.GetPlaylistMetadata(ctx, id)
 		if err != nil {
+			c.Logger().Errorf("GetPlaylist[%s] metadata: %v", id, err)
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
 		tracks, total, err := h.Spotify.GetPlaylistTracks(ctx, id, 0, limit)
 		if err != nil {
+			c.Logger().Errorf("GetPlaylist[%s] tracks: %v", id, err)
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
@@ -40,6 +42,7 @@ func (h *Handler) GetPlaylist(c echo.Context) error {
 	} else {
 		tracks, total, err := h.Spotify.GetPlaylistTracks(ctx, id, offset, limit)
 		if err != nil {
+			c.Logger().Errorf("GetPlaylist[%s] tracks offset=%d: %v", id, offset, err)
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 

@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
+	"net/http"
 	"os"
 
 	"backend/handlers"
@@ -45,6 +47,20 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		code := http.StatusInternalServerError
+		var he *echo.HTTPError
+		if errors.As(err, &he) {
+			code = he.Code
+		}
+		if code >= 500 {
+			c.Logger().Errorf("[%s %s] %d: %v", c.Request().Method, c.Request().URL.Path, code, err)
+		} else {
+			c.Logger().Warnf("[%s %s] %d: %v", c.Request().Method, c.Request().URL.Path, code, err)
+		}
+		e.DefaultHTTPErrorHandler(err, c)
+	}
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
