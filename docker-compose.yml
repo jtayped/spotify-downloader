@@ -4,7 +4,10 @@ services:
       context: ./backend
     container_name: backend
     restart: unless-stopped
-    env_file: .env
+    environment:
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - API_URL=http://backend:1323
     volumes:
       - ./backend/tmp:/app/tmp
       - ./cookies.txt:/app/cookies.txt:ro
@@ -14,7 +17,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        API_URL: http://backend:1323
+        - API_URL=http://backend:1323
     container_name: frontend
     restart: unless-stopped
     environment:
