@@ -24,7 +24,4 @@ EXPOSE 1323
 
 # Self-update yt-dlp on each start so the container stays current without a rebuild.
 # The update is best-effort — if the network is unavailable, startup continues anyway.
-# COOKIES_B64: optional base64-encoded cookies.txt (set in Coolify env vars).
-# If present it is decoded to /app/cookies.txt before the server starts.
-# For local dev the file is bind-mounted instead (see docker-compose.yml).
-CMD ["sh", "-c", "yt-dlp -U --quiet 2>&1 || true; [ -n \"$COOKIES_B64\" ] && echo \"$COOKIES_B64\" | base64 -d > /app/cookies.txt; ./main"]
+CMD ["sh", "-c", "yt-dlp -U --quiet 2>&1 || true; ./main"]

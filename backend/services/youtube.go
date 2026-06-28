@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -42,20 +43,36 @@ func parseProgress(line string) float64 {
 	return 0
 }
 
-func resolveCookiesPath() (string, bool) {
-	if p := os.Getenv("COOKIES_PATH"); p != "" {
-		if _, err := os.Stat(p); err == nil {
-			return p, true
-		}
-		log.Printf("[youtube] COOKIES_PATH set to %q but file not found, proceeding without cookies", p)
-		return "", false
+// resolveCookiesPath returns the path to a valid cookies.txt, writing it from
+// COOKIES_B64 if necessary. Priority: file at COOKIES_PATH → file at ../cookies.txt
+// → decode COOKIES_B64 → hard error.
+func resolveCookiesPath() (string, error) {
+	target := os.Getenv("COOKIES_PATH")
+	if target == "" {
+		cwd, _ := os.Getwd()
+		target = filepath.Join(cwd, "..", "cookies.txt")
 	}
-	cwd, _ := os.Getwd()
-	p := filepath.Join(cwd, "..", "cookies.txt")
-	if _, err := os.Stat(p); err == nil {
-		return p, true
+
+	if _, err := os.Stat(target); err == nil {
+		return target, nil
 	}
-	return "", false
+
+	b64 := os.Getenv("COOKIES_B64")
+	if b64 == "" {
+		return "", fmt.Errorf("cookies.txt not found at %s and COOKIES_B64 is not set", target)
+	}
+
+	data, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return "", fmt.Errorf("COOKIES_B64 is not valid base64: %w", err)
+	}
+
+	if err := os.WriteFile(target, data, 0600); err != nil {
+		return "", fmt.Errorf("failed to write cookies.txt from COOKIES_B64 to %s: %w", target, err)
+	}
+
+	log.Printf("[youtube] wrote cookies.txt from COOKIES_B64 to %s", target)
+	return target, nil
 }
 
 // isNonRetriable returns true for errors that will not improve with a different player client.
@@ -153,9 +170,9 @@ func (s *YouTubeService) FindClosestVideoID(ctx context.Context, artist, title s
 // DownloadToFile downloads a YouTube video as MP3, retrying with alternate player
 // clients if the first attempt fails. progressCallback receives 0–100 percentages.
 func (s *YouTubeService) DownloadToFile(ctx context.Context, videoID, targetPath string, progressCallback func(float64)) error {
-	cookiesPath, hasCookies := resolveCookiesPath()
-	if !hasCookies {
-		log.Printf("[youtube] no cookies.txt found, downloading without cookies")
+	cookiesPath, err := resolveCookiesPath()
+	if err != nil {
+		return fmt.Errorf("youtube: download %s: %w", videoID, err)
 	}
 
 	playerClients := []string{"default,-tv", "web", "mweb"}
@@ -173,7 +190,7 @@ func (s *YouTubeService) DownloadToFile(ctx context.Context, videoID, targetPath
 			cb = func(float64) {}
 		}
 
-		stderrStr, err := s.downloadWithClient(ctx, videoID, targetPath, cookiesPath, hasCookies, client, cb)
+		stderrStr, err := s.downloadWithClient(ctx, videoID, targetPath, cookiesPath, client, cb)
 		if err == nil {
 			return nil
 		}
@@ -189,12 +206,13 @@ func (s *YouTubeService) DownloadToFile(ctx context.Context, videoID, targetPath
 	return fmt.Errorf("youtube: download %s: all player clients failed: %w", videoID, lastErr)
 }
 
-func (s *YouTubeService) downloadWithClient(ctx context.Context, videoID, targetPath, cookiesPath string, hasCookies bool, playerClient string, progressCallback func(float64)) (stderrOutput string, err error) {
+func (s *YouTubeService) downloadWithClient(ctx context.Context, videoID, targetPath, cookiesPath, playerClient string, progressCallback func(float64)) (stderrOutput string, err error) {
 	// Clean up any partial file left by a previous attempt.
 	os.Remove(targetPath)
 	os.Remove(targetPath + ".part")
 
 	args := []string{
+		"--cookies", cookiesPath,
 		"-x", "--audio-format", "mp3",
 		"--extractor-args", "youtube:player_client=" + playerClient,
 		"--min-sleep-interval", "5",
@@ -202,10 +220,6 @@ func (s *YouTubeService) downloadWithClient(ctx context.Context, videoID, target
 		"-o", targetPath,
 		"--newline",
 		"https://www.youtube.com/watch?v=" + videoID,
-	}
-
-	if hasCookies {
-		args = append([]string{"--cookies", cookiesPath}, args...)
 	}
 
 	cmd := exec.CommandContext(ctx, s.binPath, args...)
