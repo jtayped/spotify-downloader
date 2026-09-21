@@ -1,0 +1,9 @@
+# tygo.yaml
+packages:
+  - path: "backend/models"
+    output_path: "frontend/src/types/api.ts"
+    indent: "  "
+    type_mappings:
+      any: "unknown"
+      "interface{}": "unknown"
+      time.Time: "string"

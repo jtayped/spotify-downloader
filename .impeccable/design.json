@@ -1,0 +1,514 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-06T00:00:00.000Z",
+  "title": "Design System: spotdl",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Spotify Green",
+        "canonical": "#1db954",
+        "note": "Fills, indicators and the focus ring only. Identical in both themes.",
+        "tonalRamp": [
+          "oklch(20% 0.06 148)",
+          "oklch(31% 0.09 148)",
+          "oklch(42% 0.12 148)",
+          "oklch(53% 0.15 148)",
+          "oklch(64% 0.16 148)",
+          "oklch(74% 0.13 148)",
+          "oklch(85% 0.08 148)",
+          "oklch(95% 0.03 148)"
+        ]
+      },
+      "accent-text-dark": {
+        "role": "primary",
+        "displayName": "Signal Green (dark)",
+        "canonical": "#1ed760",
+        "note": "The accent as text or icon on the dark ground."
+      },
+      "accent-text-light": {
+        "role": "primary",
+        "displayName": "Signal Green (light)",
+        "canonical": "#12833c",
+        "note": "Darkened so green text clears AA on white. #1db954 is ~2.3:1 there."
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "Accent Ink",
+        "canonical": "#0a0a0a",
+        "note": "The only value placed on top of the accent fill. 7.66:1."
+      },
+      "danger-dark": {
+        "role": "secondary",
+        "displayName": "Alert Red (dark)",
+        "canonical": "#ef4444",
+        "tonalRamp": [
+          "oklch(20% 0.07 27)",
+          "oklch(31% 0.11 27)",
+          "oklch(42% 0.15 27)",
+          "oklch(53% 0.19 27)",
+          "oklch(64% 0.21 27)",
+          "oklch(75% 0.15 27)",
+          "oklch(86% 0.09 27)",
+          "oklch(95% 0.03 27)"
+        ]
+      },
+      "danger-light": {
+        "role": "secondary",
+        "displayName": "Alert Red (light)",
+        "canonical": "#dc2626"
+      },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Machine Room Black",
+        "canonical": "#0f0f0f",
+        "note": "The designed reference ground. Album art reads best here.",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(19% 0 0)",
+          "oklch(23% 0 0)",
+          "oklch(28% 0 0)",
+          "oklch(45% 0 0)",
+          "oklch(62% 0 0)",
+          "oklch(78% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Control Grey (dark)",
+        "canonical": "#161616",
+        "note": "Controls at rest — inputs, secondary buttons, table headers."
+      },
+      "raised-dark": {
+        "role": "neutral",
+        "displayName": "Raised Grey (dark)",
+        "canonical": "#1e1e1e",
+        "note": "One step above surface: hover grounds, progress tracks, skeletons."
+      },
+      "overlay-dark": {
+        "role": "neutral",
+        "displayName": "Overlay Grey",
+        "canonical": "#1a1a1a",
+        "note": "Floating surfaces. Lighter than canvas in dark; equal to canvas in light — an overlay is told apart by border and shadow, not tone."
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark)",
+        "canonical": "#262626",
+        "note": "Global border-color. Every surface separation in the system."
+      },
+      "line-strong-dark": {
+        "role": "neutral",
+        "displayName": "Emphasis Line (dark)",
+        "canonical": "#333333",
+        "note": "Hover borders and the scrollbar thumb."
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#ededed",
+        "note": "16.37:1 on canvas. Titles and primary copy.",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(37% 0 0)",
+          "oklch(48% 0 0)",
+          "oklch(60% 0 0)",
+          "oklch(71% 0 0)",
+          "oklch(83% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "ink-muted-dark": {
+        "role": "neutral",
+        "displayName": "Muted Ink (dark)",
+        "canonical": "#a1a1a1",
+        "note": "7.42:1 on canvas. Secondary lines, artists, metadata."
+      },
+      "ink-subtle-dark": {
+        "role": "neutral",
+        "displayName": "Subtle Ink (dark)",
+        "canonical": "#8a8a8a",
+        "note": "5.55:1 on canvas. The contrast floor — there is no dimmer step."
+      },
+      "canvas-light": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#ffffff",
+        "note": "Composed by hand from the dark reference, never auto-inverted.",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(28% 0 0)",
+          "oklch(40% 0 0)",
+          "oklch(52% 0 0)",
+          "oklch(66% 0 0)",
+          "oklch(81% 0 0)",
+          "oklch(92% 0 0)",
+          "oklch(100% 0 0)"
+        ]
+      },
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "Control Grey (light)",
+        "canonical": "#fafafa"
+      },
+      "raised-light": {
+        "role": "neutral",
+        "displayName": "Raised Grey (light)",
+        "canonical": "#f2f2f2"
+      },
+      "line-light": {
+        "role": "neutral",
+        "displayName": "Hairline (light)",
+        "canonical": "#e6e6e6"
+      },
+      "line-strong-light": {
+        "role": "neutral",
+        "displayName": "Emphasis Line (light)",
+        "canonical": "#d4d4d4"
+      },
+      "ink-light": {
+        "role": "neutral",
+        "displayName": "Ink (light)",
+        "canonical": "#171717",
+        "note": "17.93:1 on canvas."
+      },
+      "ink-muted-light": {
+        "role": "neutral",
+        "displayName": "Muted Ink (light)",
+        "canonical": "#595959",
+        "note": "7.00:1 on canvas."
+      },
+      "ink-subtle-light": {
+        "role": "neutral",
+        "displayName": "Subtle Ink (light)",
+        "canonical": "#6e6e6e",
+        "note": "5.10:1 on canvas. The contrast floor."
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The home page's single sentence. Nothing else uses it."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "Release and track titles in the masthead. Ramps 1.875rem → 2.25rem at sm → 2.75rem at lg; the track page tops out at 2.5rem."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings, panel header, wordmark. Also the 500-weight byline under a release title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Track names, table cells, detail values, paragraphs, md/sm buttons. Long-form copy capped at 52–65ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels, secondary metadata, artist lines, load-more counters."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Table column headers, badges, job-row type captions, digest references."
+      },
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "Durations, track positions, percentages, ISRC, popularity. Always tabular; durations, positions and identifiers also mono."
+      }
+    },
+    "notes": [
+      "There is no type-scale token set in the build. Sizes are arbitrary values chosen per component; the roles above describe what is actually in use, not a scale the code reads from. Promoting them into named steps is a known open item.",
+      "The two shadows below are exhaustive. No element in frontend/src uses a shadow outside them; grep -r 'shadow-sm\\|shadow-lg\\|drop-shadow' frontend/src returns nothing."
+    ],
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 8px 24px -6px var(--shadow-color), 0 2px 6px -2px var(--shadow-color)",
+        "purpose": "Anything that overlays page content: popover, tooltip, now-playing bar, docked downloads panel, inline URL error, the selected segmented item. Shadow alpha is 10% light / 50% dark."
+      },
+      {
+        "name": "art",
+        "value": "0 16px 40px -12px var(--shadow-art-color)",
+        "purpose": "Cover art on a masthead, and nothing else. The one place the system admits physical depth. Alpha 18% light / 60% dark."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-quint",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "The system's only authored easing curve, used by the rise entrance."
+      },
+      {
+        "name": "rise",
+        "value": "rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both",
+        "purpose": "The single entrance animation, reused everywhere. Opacity 0→1 with a 6px upward offset; content is visible by default so a failed animation never hides anything."
+      },
+      {
+        "name": "sweep",
+        "value": "sweep 1.4s ease-in-out infinite",
+        "purpose": "Skeleton shimmer and indeterminate progress. translateX only."
+      },
+      {
+        "name": "spin-slow",
+        "value": "spin-slow 900ms linear infinite",
+        "purpose": "The ring spinner, slow enough to read at 16px."
+      },
+      {
+        "name": "state",
+        "value": "150ms ease-out",
+        "purpose": "Default state transition on background-color, border-color, color and opacity. Panel dock and sheet slide use 200ms; row hover uses 100ms."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "@media (prefers-reduced-motion: reduce) { animation-duration: 0.01ms; transition-duration: 0.01ms; scroll-behavior: auto }",
+        "purpose": "Global collapse. Applied to every element, pseudo-element included."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "containers": [
+      {
+        "name": "playlist",
+        "value": "1400px"
+      },
+      {
+        "name": "album / track",
+        "value": "896px"
+      },
+      {
+        "name": "home",
+        "value": "576px"
+      },
+      {
+        "name": "downloads dock",
+        "value": "380px"
+      },
+      {
+        "name": "top bar",
+        "value": "1400px"
+      }
+    ],
+    "radii": {
+      "scale": [
+        "4px (xs)",
+        "6px (sm)",
+        "8px (md)",
+        "12px (lg)",
+        "16px (xl)",
+        "9999px (full)"
+      ],
+      "note": "--radius-xs deliberately overrides Tailwind v4's built-in 2px value; 2px is too tight to read as a corner at this density. --radius-2xl (20px) was declared and never used, so it was removed rather than recorded as dead. Radius is always applied by token name: no arbitrary radius values remain in frontend/src.",
+      "auditTest": "grep -r 'rounded-\\[' frontend/src returns nothing"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single most important action on a page — download, open, try again. One per view.",
+      "html": "<button class=\"ds-btn-primary\">download</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 14px; border: none; border-radius: 8px; background: var(--accent, #1db954); color: var(--accent-ink, #0a0a0a); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out, opacity 150ms ease-out; } .ds-btn-primary:hover { background: var(--accent-hover, #1ed760); } .ds-btn-primary:focus-visible { outline: 2px solid var(--accent, #1db954); outline-offset: 2px; border-radius: var(--radius-xs, 4px); } .ds-btn-primary:disabled { opacity: 0.45; pointer-events: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The default variant. Bordered at rest; hover moves the border up a step rather than adding a shadow.",
+      "html": "<button class=\"ds-btn-secondary\">open in spotify</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 14px; border: 1px solid var(--line, #262626); border-radius: 8px; background: var(--surface, #161616); color: var(--ink, #ededed); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; } .ds-btn-secondary:hover { background: var(--raised, #1e1e1e); border-color: var(--line-strong, #333333); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--accent, #1db954); outline-offset: 2px; border-radius: var(--radius-xs, 4px); }"
+    },
+    {
+      "name": "Ghost Icon Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Chrome-level actions — theme toggle, clear, dismiss, panel close. No ground until hover.",
+      "html": "<button class=\"ds-btn-ghost\" aria-label=\"close downloads\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M18 6 6 18M6 6l12 12\"/></svg></button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: none; border-radius: 6px; background: transparent; color: var(--ink-muted, #a1a1a1); cursor: pointer; transition: background-color 150ms ease-out, color 150ms ease-out; } .ds-btn-ghost:hover { background: var(--raised, #1e1e1e); color: var(--ink, #ededed); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--accent, #1db954); outline-offset: 2px; border-radius: var(--radius-xs, 4px); }"
+    },
+    {
+      "name": "URL Field (hero)",
+      "kind": "input",
+      "refersTo": "url-field-hero",
+      "description": "The one way into the app. Type icon on the left, validity glyph and paste action on the right, a hint line beneath that names the problem or confirms the link.",
+      "html": "<div class=\"ds-urlfield\"><svg class=\"ds-urlfield-icon\" viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><path d=\"M9 15 15 9M10.5 6.5 12 5a4.95 4.95 0 0 1 7 7l-1.5 1.5M13.5 17.5 12 19a4.95 4.95 0 0 1-7-7l1.5-1.5\"/></svg><input class=\"ds-urlfield-input\" type=\"url\" placeholder=\"paste a spotify track, album or playlist link\" aria-label=\"spotify link\" /><button class=\"ds-btn-primary\">open</button></div><p class=\"ds-urlfield-hint\">works with share links, locale links and <span class=\"ds-mono\">spotify:</span> uris.</p>",
+      "css": ".ds-urlfield { display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 12px; border: 1px solid var(--line, #262626); border-radius: 16px; background: var(--surface, #161616); transition: border-color 150ms ease-out, background-color 150ms ease-out; } .ds-urlfield:hover { border-color: var(--line-strong, #333333); } .ds-urlfield:focus-within { border-color: var(--accent, #1db954); background: var(--canvas, #0f0f0f); } .ds-urlfield-icon { flex-shrink: 0; color: var(--ink-subtle, #8a8a8a); } .ds-urlfield-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; color: var(--ink, #ededed); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 15px; } .ds-urlfield-input::placeholder { color: var(--ink-subtle, #8a8a8a); } .ds-urlfield-hint { margin: 10px 0 0; color: var(--ink-subtle, #8a8a8a); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 12px; } .ds-mono { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented-item-selected",
+      "description": "Single-select radiogroup for format, quality and cover mode. The selected item lifts to a canvas ground with the float shadow; arrow keys roll selection.",
+      "html": "<div class=\"ds-segmented\" role=\"radiogroup\" aria-label=\"audio quality\"><button class=\"ds-segmented-item\" role=\"radio\" aria-checked=\"false\">96k</button><button class=\"ds-segmented-item\" role=\"radio\" aria-checked=\"false\">128k</button><button class=\"ds-segmented-item ds-segmented-item--on\" role=\"radio\" aria-checked=\"true\">best</button></div>",
+      "css": ".ds-segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; padding: 2px; border: 1px solid var(--line, #262626); border-radius: 8px; background: var(--surface, #161616); } .ds-segmented-item { padding: 6px 8px; border: none; border-radius: 6px; background: transparent; color: var(--ink-muted, #a1a1a1); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: color 150ms ease-out, background-color 150ms ease-out; } .ds-segmented-item:hover { color: var(--ink, #ededed); } .ds-segmented-item--on { background: var(--canvas, #0f0f0f); color: var(--ink, #ededed); box-shadow: 0 8px 24px -6px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.5); } .ds-segmented-item:focus-visible { outline: 2px solid var(--accent, #1db954); outline-offset: 2px; }"
+    },
+    {
+      "name": "Job Row",
+      "kind": "custom",
+      "refersTo": "downloads-dock",
+      "description": "One running download in the docked panel: artwork, linked title, type caption, status icon, message, mono percentage, and a transform-only progress bar.",
+      "html": "<li class=\"ds-job\"><div class=\"ds-job-art\"></div><div class=\"ds-job-body\"><a class=\"ds-job-title\" href=\"#\">midnight marauders</a><p class=\"ds-job-type\">album</p><div class=\"ds-job-status\"><span class=\"ds-spinner\" role=\"status\" aria-label=\"loading\"></span><p class=\"ds-job-message\">downloading track 7 of 14</p><span class=\"ds-job-pct\">48%</span></div><div class=\"ds-progress\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"48\"><div class=\"ds-progress-fill\" style=\"transform: translateX(-52%)\"></div></div></div></li>",
+      "css": ".ds-job { display: flex; gap: 12px; list-style: none; padding: 12px 16px; border-bottom: 1px solid rgb(38 38 38 / 0.7); } .ds-job-art { flex-shrink: 0; width: 44px; height: 44px; border: 1px solid var(--line, #262626); border-radius: 8px; background: var(--raised, #1e1e1e); } .ds-job-body { flex: 1; min-width: 0; } .ds-job-title { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink, #ededed); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; } .ds-job-title:hover { color: var(--accent-text, #1ed760); } .ds-job-type { margin: 2px 0 0; color: var(--ink-subtle, #8a8a8a); font-size: 11px; } .ds-job-status { display: flex; align-items: center; gap: 8px; margin-top: 8px; } .ds-job-message { flex: 1; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-muted, #a1a1a1); font-size: 12px; } .ds-job-pct { flex-shrink: 0; color: var(--ink-muted, #a1a1a1); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; font-variant-numeric: tabular-nums; } .ds-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgb(29 185 84 / 0.25); border-top-color: var(--accent, #1db954); border-radius: 9999px; animation: ds-spin 900ms linear infinite; } .ds-progress { position: relative; overflow: hidden; height: 4px; margin-top: 8px; border-radius: 9999px; background: var(--raised, #1e1e1e); } .ds-progress-fill { width: 100%; height: 100%; border-radius: 9999px; background: var(--accent, #1db954); transition: transform 300ms ease-out; } @keyframes ds-spin { to { transform: rotate(360deg); } }"
+    },
+    {
+      "name": "Track Row",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "One row of the bordered tracklist. The number cell swaps for a play button on hover so nothing shifts; duration is mono and tabular.",
+      "html": "<table class=\"ds-table\"><thead><tr><th class=\"ds-th ds-th--num\">#</th><th class=\"ds-th\">title</th><th class=\"ds-th ds-th--time\">time</th></tr></thead><tbody><tr class=\"ds-tr\"><td class=\"ds-td ds-td--num\">4</td><td class=\"ds-td\"><span class=\"ds-track-name\">electric relaxation</span><p class=\"ds-track-artists\">a tribe called quest</p></td><td class=\"ds-td ds-td--time\">4:03</td></tr></tbody></table>",
+      "css": ".ds-table { width: 100%; border-collapse: collapse; border: 1px solid var(--line, #262626); border-radius: 16px; overflow: hidden; background: var(--canvas, #0f0f0f); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; } .ds-th { padding: 8px 12px; background: var(--surface, #161616); border-bottom: 1px solid var(--line, #262626); color: var(--ink-subtle, #8a8a8a); font-size: 11px; font-weight: 500; text-align: left; } .ds-th--num { width: 48px; text-align: center; } .ds-th--time { text-align: right; } .ds-tr { border-bottom: 1px solid rgb(38 38 38 / 0.6); transition: background-color 100ms ease-out; } .ds-tr:hover { background: var(--surface, #161616); } .ds-td { padding: 10px 12px; vertical-align: middle; } .ds-td--num { width: 48px; text-align: center; color: var(--ink-subtle, #8a8a8a); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums; } .ds-td--time { text-align: right; white-space: nowrap; color: var(--ink-muted, #a1a1a1); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums; } .ds-track-name { color: var(--ink, #ededed); font-size: 13px; font-weight: 500; } .ds-track-artists { margin: 2px 0 0; color: var(--ink-muted, #a1a1a1); font-size: 12px; }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge-neutral",
+      "description": "Four variants — neutral, accent, danger, outline. The outline variant carries the explicit marker on a track.",
+      "html": "<span class=\"ds-badge\">mp3</span> <span class=\"ds-badge ds-badge--accent\">complete</span> <span class=\"ds-badge ds-badge--outline\">e</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border: 1px solid var(--line, #262626); border-radius: 6px; background: var(--surface, #161616); color: var(--ink-muted, #a1a1a1); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; } .ds-badge--accent { border-color: rgb(29 185 84 / 0.3); background: rgb(29 185 84 / 0.14); color: var(--accent-text, #1ed760); } .ds-badge--outline { border-color: var(--line-strong, #333333); background: transparent; color: var(--ink-subtle, #8a8a8a); }"
+    },
+    {
+      "name": "Popover",
+      "kind": "card",
+      "refersTo": "popover",
+      "description": "The download-options surface. Overlay ground, bordered, float shadow, entering with the one authored rise animation.",
+      "html": "<div class=\"ds-popover\"><p class=\"ds-popover-title\">download options</p><label class=\"ds-popover-label\">format</label><p class=\"ds-popover-hint\">re-encoded to mp3 and tagged with spotify metadata and cover art.</p></div>",
+      "css": ".ds-popover { width: 288px; padding: 16px; border: 1px solid var(--line, #262626); border-radius: 12px; background: var(--overlay, #1a1a1a); box-shadow: 0 8px 24px -6px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.5); font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif; animation: ds-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both; } .ds-popover-title { margin: 0 0 16px; color: var(--ink, #ededed); font-size: 13px; font-weight: 600; } .ds-popover-label { display: block; color: var(--ink, #ededed); font-size: 12px; font-weight: 500; } .ds-popover-hint { margin: 6px 0 0; color: var(--ink-subtle, #8a8a8a); font-size: 11px; line-height: 1.375; } @keyframes ds-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }"
+    },
+    {
+      "name": "Cover Art",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Square artwork with a real placeholder state. The one content element that carries a shadow.",
+      "html": "<div class=\"ds-cover\"><svg viewBox=\"0 0 24 24\" width=\"64\" height=\"64\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M12 2a10 10 0 0 1 0 20\"/></svg></div>",
+      "css": ".ds-cover { display: flex; align-items: center; justify-content: center; width: 192px; height: 192px; overflow: hidden; border: 1px solid var(--line, #262626); border-radius: 16px; background: var(--raised, #1e1e1e); color: var(--ink-subtle, #8a8a8a); box-shadow: 0 16px 40px -12px rgb(0 0 0 / 0.6); }"
+    },
+    {
+      "name": "Route Skeleton",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Per-route loading state. Laid out at its own page's measure — playlist 1400px/8 rows, album 896px/6 rows, track 896px art-plus-details. There is no app-level skeleton.",
+      "html": "<div class=\"ds-skel-page\"><div class=\"ds-skel-masthead\"><div class=\"ds-skel ds-skel-cover\"></div><div class=\"ds-skel-lines\"><div class=\"ds-skel\" style=\"height:44px;width:66%\"></div><div class=\"ds-skel\" style=\"height:16px;width:176px\"></div><div class=\"ds-skel\" style=\"height:16px;width:240px\"></div><div class=\"ds-skel\" style=\"height:44px;width:208px;margin-top:20px\"></div></div></div><div class=\"ds-skel-table\"><div class=\"ds-skel ds-skel-thead\"></div><div class=\"ds-skel-rows\"><div class=\"ds-skel\" style=\"height:48px\"></div><div class=\"ds-skel\" style=\"height:48px\"></div><div class=\"ds-skel\" style=\"height:48px\"></div></div></div><span class=\"ds-sr\">loading</span></div>",
+      "css": ".ds-skel-page { max-width: 896px; margin: 0 auto; padding: 32px 16px; } .ds-skel-masthead { display: flex; gap: 32px; align-items: flex-end; } .ds-skel-lines { flex: 1; display: flex; flex-direction: column; gap: 12px; } .ds-skel-cover { width: 192px; height: 192px; border-radius: 16px; } .ds-skel { position: relative; overflow: hidden; border-radius: 8px; background: var(--raised, #1e1e1e); } .ds-skel::after { content: \"\"; position: absolute; inset: 0; background: linear-gradient(to right, transparent, rgb(38 38 38 / 0.7), transparent); animation: ds-sweep 1.4s ease-in-out infinite; } .ds-skel-table { overflow: hidden; margin-top: 40px; border: 1px solid var(--line, #262626); border-radius: 16px; } .ds-skel-thead { height: 36px; border-radius: 0; } .ds-skel-rows { display: flex; flex-direction: column; gap: 1px; padding: 12px; } .ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } @keyframes ds-sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Machine Room",
+    "overview": "spotdl is a working tool that happens to be about music. Its ground is a deep neutral you would find in a dashboard, not on a marketing page, and everything drawn on that ground is either a control or a piece of real content from Spotify. The album art is the only saturated thing on most screens — the interface itself contributes almost no color at all. Where color does appear it is doing a job: the accent marks the thing you press, the progress that advances, and the row that is currently playing. Nothing is tinted for atmosphere.\n\nDensity is dashboard-density: a 14px body base, tracks at 13px in bordered tables, controls on a 32/36/44px height ladder. But the release pages open up — cover art at 160–224px, a title up to 2.75rem, and a 40px gap before the tracklist — because a record deserves a masthead. The tool is dense; the content is not.\n\nDark is the designed reference. The palette was drawn on #0f0f0f, where cover art reads best, and light was then composed by hand from it, value by value, never generated by inversion. Both themes ship every token and both are held to the same contrast floor. The system's confirmed anti-references are the sketchy-downloader register, SaaS marketing gloss, consumer bubbliness, and framework-default gray. Its craft floor is Supabase's dashboard density and docked-panel language, Vercel's typographic restraint, and Apple's spatial generosity on content pages.",
+    "keyCharacteristics": [
+      "Dark-first neutrals, light composed by hand from them",
+      "Bordered at rest — depth comes from 1px lines and tonal steps, not shadow",
+      "Spotify green on fills, progress and state; never as body text on a light ground",
+      "A real 4/6/8/12/16 radius scale, applied consistently and always by token name",
+      "Geist and Geist Mono, tabular numerals on every figure that can be compared",
+      "All interface copy lowercase, written that way in the source",
+      "One authored entrance, reused everywhere; everything collapses under reduced motion"
+    ],
+    "rules": [
+      {
+        "name": "The Accent-Text Rule",
+        "body": "--accent is a fill; --accent-text is text. #1db954 fails AA outright on white, so any green word, number or icon takes --accent-text. Reaching for --accent because it is \"the brand color\" is how the light theme breaks.",
+        "section": "colors"
+      },
+      {
+        "name": "The Content-Wins Rule",
+        "body": "Cover art is the loudest thing on any page and nothing in the chrome may compete with it. The interface contributes green and red and otherwise stays neutral; there are no tinted panels, no gradient grounds, and no decorative color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Browser-Surface Rule",
+        "body": "Selection, caret, focus ring and scrollbar are part of the system and are themed explicitly. A surface you did not draw is still a surface you own.",
+        "section": "colors"
+      },
+      {
+        "name": "The Lowercase Rule",
+        "body": "Every word the interface itself writes is lowercase — headings, buttons, labels, errors, aria-labels, the wordmark — and it is written lowercase in the source, never produced by text-transform, so the accessibility tree and the clipboard match what is on screen. Content from Spotify keeps its own casing untouched. This is a hard rule; a single sentence-cased button breaks it visibly.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Any number that can be compared down a column or that changes in place carries the .tabular utility: durations, track numbers, percentages, ISRC, counts, aggregate runtimes. Durations, positions and identifiers additionally take Geist Mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Kicker Rule",
+        "body": "A page's type starts at its title. The resource type lives in the metadata line under the heading, never as a small label above it, and there are no eyebrows, kickers or category tags anywhere in the system.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measure Rule",
+        "body": "Container width follows column count, not page importance. Add a column, widen the measure; remove one, narrow it. A route skeleton inherits the measure of the page it stands in for — there is no shared app-level skeleton, because one measure cannot be right for a 1400px playlist and an 896px track page, and getting it wrong makes the layout jump sideways the moment content resolves.",
+        "section": "layout"
+      },
+      {
+        "name": "The Bordered-At-Rest Rule",
+        "body": "If it sits in the page, it gets a border and a tonal step. If it floats over the page, it gets --shadow-float. There is no third option, and hover never adds a shadow — hover moves a border from line to line-strong, or a ground from surface to raised.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Art Exception",
+        "body": "--shadow-art belongs to cover art and nothing else. It is the one place the system admits physical depth, because the artwork is the only object on the page that is not part of the interface.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Rounded Rule",
+        "body": "The previous 0px-radius identity is retired and must not be reintroduced. Every surface takes a step from the scale. rounded-none is not a surface radius in this system; the one legitimate use is squaring an inner edge that a rounded parent already clips.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Named-Step Rule",
+        "body": "Radius is applied by token name — rounded-xs, rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-full. There are no arbitrary radius values anywhere in frontend/src, and grep -r 'rounded-[' returning nothing is the audit test. A rounded-[6px] that happens to equal --radius-sm is drift waiting to happen: it survives a change to the token and silently stops matching everything around it.",
+        "section": "shapes"
+      },
+      {
+        "name": "The One Entrance Rule",
+        "body": "animate-rise is the only entrance in the system. A new surface that wants to appear uses it; it does not get its own keyframes, its own duration, or its own easing.",
+        "section": "components"
+      },
+      {
+        "name": "The Compositor Rule",
+        "body": "Anything that animates while a download runs animates transform or opacity only. Progress fills translate; they do not animate width.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do design in dark first and then compose the light value by hand. Every token exists in both themes and both are shipped; an auto-inverted light theme is not acceptable.",
+      "Do use --accent-text for any green word, number or icon, and --accent only for fills, indicators and the focus ring.",
+      "Do separate surfaces with a 1px --line border and a step in the tonal stack. Reserve --shadow-float for elements that overlay page content.",
+      "Do give cover art --shadow-art on mastheads. It is the one content element that earns depth.",
+      "Do write every word the interface itself says in lowercase, in the source. Leave Spotify's own strings alone.",
+      "Do put .tabular on every duration, percentage, count, track position and ISRC, and set durations, positions and identifiers in Geist Mono.",
+      "Do take radii from the 4/6/8/12/16 scale by token name (rounded-xs … rounded-xl), rising with the size of the element, and use full rounding only for circles and pills.",
+      "Do give a new route its own skeleton at that route's measure, reproducing the real page's cover size and container radius.",
+      "Do pick type sizes from the ramp already in use (11/12/13/15px, then the display steps). If you find yourself needing a new size, that is a signal to promote the ramp into tokens, not to add a sixteenth arbitrary value.",
+      "Do pair every color-carried state with an icon and a sentence — errors, completions and in-progress states all do this today.",
+      "Do keep transitions to color, border and transform at 100–200ms ease-out, and let prefers-reduced-motion collapse them."
+    ],
+    "donts": [
+      "Don't reintroduce a 0px radius as a surface treatment. The sharp identity is retired; rounded-none is only for squaring an inner edge a rounded parent already clips.",
+      "Don't write an arbitrary radius (rounded-[6px]) or an off-token shadow (shadow-sm, drop-shadow-*). Both were removed from this codebase deliberately; reintroducing one restarts the drift.",
+      "Don't add an app-level loading.tsx. A single skeleton cannot match every route's measure, and the width jump on resolve is exactly what the per-route skeletons exist to prevent.",
+      "Don't use --accent for text, especially on a light ground — it is ~2.3:1 on white and fails AA outright.",
+      "Don't add a shadow to a button, input, card, table or table row. Bordered at rest, in both themes.",
+      "Don't introduce a fourth text step below --ink-subtle, or tint a neutral surface. The palette's only chromatic roles are green and red.",
+      "Don't set interface copy in sentence case or Title Case, and don't produce lowercase with text-transform — the accessibility tree must match the render.",
+      "Don't add a kicker, eyebrow or category label above a heading. Resource type belongs in the metadata line beneath the title.",
+      "Don't author a second entrance animation. Reuse animate-rise.",
+      "Don't animate width, height or box-shadow on anything that runs during a download.",
+      "Don't show a raw runtime or HTTP error message. Map it to lowercase product copy and log the original.",
+      "Don't hide the URL field at any width. It is the only route into the app."
+    ]
+  }
+}

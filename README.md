@@ -1,99 +1,107 @@
-<br/>
-<p align="center">
-  <a href="https://github.com/jtayped/spotify-downloader">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+# spotify-downloader
 
-  <h3 align="center">Spotify Downloader</h3>
+paste a spotify link, get a zip of mp3s. it reads the track list and metadata from the spotify api, finds a matching youtube video for each track with yt-dlp, downloads the audio, tags it, and packages the result.
 
-  <p align="center">
-    A website where you can download Spotify playlists or tracks, developed with Next JS.
-    <br/>
-    <br/>
-    <a href="https://github.com/jtayped/spotify-downloader"><strong>Explore the docs »</strong></a>
-    <br/>
-    <br/>
-    <a href="https://spotifydownload.net/">View Demo</a>
-    .
-    <a href="https://github.com/jtayped/spotify-downloader/issues">Report Bug</a>
-    .
-    <a href="https://github.com/jtayped/spotify-downloader/issues">Request Feature</a>
-  </p>
-</p>
+this is a rewrite of the original spotify-downloader, which did everything in the browser with ytdl-core and ffmpeg.wasm. that version is retired. this one is a go backend with a next.js frontend, self-hosted behind nginx.
 
-![Contributors](https://img.shields.io/github/contributors/jtayped/spotify-downloader?color=dark-green) ![Issues](https://img.shields.io/github/issues/jtayped/spotify-downloader) ![License](https://img.shields.io/github/license/jtayped/spotify-downloader)
+## how it works
 
-## Table Of Contents
+tracks, albums and playlists all work. the frontend accepts share links, locale-prefixed links like `open.spotify.com/intl-es/album/<id>`, links with `?si=` params, and bare `spotify:album:<id>` uris.
 
-- [About the Project](#about-the-project)
-- [Built With](#built-with)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
+opening a link shows the collection: cover art, track table with artists, duration, explicit flags, release date, and for single tracks the deeper metadata (isrc, popularity, label, copyright). playlist and album tables paginate with infinite scroll. 30-second previews play from a single shared audio element, though spotify deprecated `preview_url` for most apps in late 2024, so the play control is usually disabled with a tooltip saying why.
 
-## About The Project
+starting a download posts to `/api/{track,album,playlist}/:id/download`, which creates a uuid job and drops it on a buffered queue. worker goroutines pick jobs up and run them through the orchestrator: resolve the track list, download tracks in parallel under a shared semaphore, tag each file, zip the result. progress goes over a websocket at `/api/ws?job_id=<id>`, and on completion the client fetches the zip from `/api/download/:jobId`. single-track jobs also return a zip, just with one file in it.
 
-![Screen Shot](images/main.png)
+download options per job:
 
-A handy tool for Spotify lovers. It has a simple layout, lets you listen to a song before saving it, and adds metadata to your downloads. It saves you time organizing your music. Give it a try!
+- format: `mp3` (re-encoded so it can be tagged) or `original` (whatever native codec youtube served, untagged)
+- quality: `low` (96k), `medium` (128k), `high` (best-effort vbr), mp3 only
+- cover art: embedded per track, or one `cover.jpg` in the zip root (album jobs)
+- optional `playlist.m3u8` in original track order
 
-## Built With
+tagging is done with ffmpeg and does not re-encode. it writes title, artist, album, cover art and the rest from spotify's metadata, not from the youtube video.
 
-This app is built with Next JS, utilising modules such as: ytdl-core, youtube-sr, and most notably ffmpeg.wasm.
+downloads are tracked as jobs, not page state. they live in a provider, persist to localstorage, and survive navigation and reloads. a job that was still running when you closed the tab reconnects; one that finished while the tab was closed falls back to a manual "try saving the file" action, since the websocket hub drops a job once nobody is subscribed to it.
 
-## Getting Started
+two limits are enforced globally rather than per job: `MAX_CONCURRENT_DOWNLOADS` caps how many tracks are being fetched and tagged at once across the whole server, and `MAX_CONCURRENT_JOBS` caps how many jobs are actively orchestrated.
 
-First, run the development server:
+## stack
 
-```sh
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+go 1.25 with echo v4, gorilla/websocket and zmb3/spotify on the backend. next.js 15 (app router) with react 19, tanstack query, tailwind v4 and base-ui/radix primitives on the frontend. yt-dlp and ffmpeg are shelled out to. nginx sits in front of both containers.
+
+shared types live in `backend/models/types.go` and are generated into `frontend/src/types/api.ts` with tygo. don't edit the generated file.
+
+## environment variables
+
+copy `.env.example` to `.env` and fill it in.
+
+| var | required | what it does |
+|---|---|---|
+| `SPOTIFY_CLIENT_ID` | yes | spotify api credentials |
+| `SPOTIFY_CLIENT_SECRET` | yes | spotify api credentials |
+| `API_URL` | yes | backend url for next.js server-side rewrites. `http://localhost:1323` in dev, set to the internal container url by docker |
+| `NEXT_PUBLIC_WS_URL` | dev only | direct websocket url to the go server. next.js rewrites proxy http but not websocket upgrades, so dev needs this. leave it unset in production, where nginx handles the upgrade |
+| `MAX_CONCURRENT_DOWNLOADS` | no | defaults to 5 |
+| `MAX_CONCURRENT_JOBS` | no | defaults to 5 |
+
+### the spotify credentials need a premium account
+
+you get a client id and secret by registering an app in the [spotify developer dashboard](https://developer.spotify.com/dashboard). as of now spotify requires a **spotify premium** subscription on the account before it will let you create an application. a free account can log into the dashboard but cannot create an app, so there is no way to get credentials without premium. there is no workaround for this in the app, and nothing here works without those two values.
+
+### cookies.txt
+
+yt-dlp needs a cookie jar to download audio reliably. export your youtube cookies in netscape format to `cookies.txt` at the repo root. it is gitignored, and docker bind-mounts it read-only into the backend container. the backend copies it to a writable path at runtime, since yt-dlp rewrites the jar on every run.
+
+on platforms without volume mounts, set `COOKIES_B64` instead — the base64-encoded contents of the same file. the backend decodes it and writes it to the runtime path itself if no `cookies.txt` is found.
+
+## deployment
+
+self-hosted with docker compose. three containers: nginx, the go backend, and the next.js frontend. nginx listens on port 80, routes `/api/*` to the backend and everything else to the frontend, and forwards websocket upgrades with a long read timeout so downloads don't get cut off.
+
+```bash
+cp .env.example .env   # then fill in the spotify credentials
+docker compose up --build
 ```
 
-### Prerequisites
+or `make docker-up`, which does the same. the app is then on `http://localhost:80`. `make docker-down` stops it.
 
-You must have Node JS installed
+the backend image installs ffmpeg and yt-dlp, and self-updates yt-dlp on start so the container doesn't go stale between rebuilds. `backend/tmp` is bind-mounted so finished zips survive a restart.
 
-### Installation
+## local development
 
-1. Aquire a Spotify Client ID and Secret from a Spotify API app.
-2. Create an env file ".env.local" and add each one to CLIENT_ID & CLEINT_SECRET.
-3. Open https://localhost:3000 with your browser to see the result.
+install once:
 
-## Usage
+```bash
+go install github.com/air-verse/air@latest    # live reload
+go install github.com/gzuidhof/tygo@latest    # go -> ts types
+cd frontend && npm install
+```
 
-When greeted at the home screen, enter a playlist or track link. On load, you will be able to download all the available content. If you have any doubts, you can preview the track by simply playing it in the UI.
+you also need `yt-dlp` and `ffmpeg` on your path. the backend panics at startup if yt-dlp is missing.
 
-## Roadmap
+then run the two halves in separate terminals:
 
-See the [open issues](https://github.com/jtayped/spotify-downloader/issues) for a list of proposed features (and known issues).
+```bash
+make backend-dev    # go backend on :1323, live reload via air
+make frontend       # next.js dev server on :3000
+```
 
-## Contributing
+`make backend` runs the backend without live reload. the backend loads `../.env` relative to `backend/`, so it picks up the root `.env` on its own.
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+after changing `backend/models/types.go`:
 
-- If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/jtayped/spotify-downloader/issues/new) to discuss it, or directly create a pull request after you edit the _README.md_ file with necessary changes.
-- Please make sure you check your spelling and grammar.
-- Create individual PR for each suggestion.
-- Please also read through the [Code Of Conduct](https://github.com/jtayped/spotify-downloader/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
+```bash
+make gen            # regenerates frontend/src/types/api.ts
+```
 
-### Creating A Pull Request
+frontend checks are `npm run typecheck`, `npm run check` (lint + typecheck) and `npm run format:write`, all from `frontend/`.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## contributing
 
-## License
+it's a hobby project with one maintainer, so nothing formal. fork it, branch off main, keep the change focused, open a pr. run `make gen` if you touched the go models and `npm run check` if you touched the frontend. issues are fine for bugs and ideas.
 
-Distributed under the MIT License. See [LICENSE](https://github.com/jtayped/spotify-downloader/blob/main/LICENSE.md) for more information.
+one house rule: all ui copy the app writes is lowercase in the source, not lowercased with css. text that comes from spotify keeps its own casing.
+
+## license
+
+mit. see [LICENSE](LICENSE).
