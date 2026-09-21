@@ -19,7 +19,7 @@
     "framer-motion": "^11.0.6",
     "fs": "^0.0.1-security",
     "jszip": "^3.10.1",
-    "next": "^14.1.0",
+    "next": "^15.5.24",
     "node-id3": "^0.2.6",
     "react": "^18",
     "react-dom": "^18",
